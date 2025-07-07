@@ -138,7 +138,7 @@ const ApplicantRegistration: React.FC = () => {
     switch (name) {
       case 'cedula_identidad':
         if (!value || typeof value !== 'string') return 'La cédula de identidad es requerida';
-        if (!/^\d{7,9}$/.test(value)) return 'La cédula debe tener entre 7 y 9 dígitos';
+        if (!/^\d{7,9}$/.test(value)) return 'La cédula debe tener entre 7 y 9 dígitos';        
         break;
       case 'expedicion':
         if (!value) return 'La expedición es requerida';
@@ -160,11 +160,11 @@ const ApplicantRegistration: React.FC = () => {
       case 'zona':
       case 'calleAvenida':
         if (!value || typeof value !== 'string') return 'Este campo es requerido';
-        if (!/^[A-Za-zÁÉÍÓÚáéíóúñÑ\s]+$/.test(value)) return 'Solo se permiten letras';
+        if (/^[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]+$/.test(value)) return 'No se permiten símbolos.';
         break;
       case 'numeroDomicilio':
         if (!value || typeof value !== 'string') return 'El número de domicilio es requerido';
-        if (!/^\d{1,5}$/.test(value)) return 'Solo números (máximo 5 dígitos)';
+        if (!/^[A-Z0-9]{1,5}$/.test(value)) {return 'Solo letras mayúsculas, números y espacios (máximo 5 caracteres)';}        
         break;
       case 'email':
         if (!value || typeof value !== 'string') return 'El email es requerido';
@@ -185,13 +185,28 @@ const ApplicantRegistration: React.FC = () => {
         if (!value || typeof value !== 'string') return 'El ID del recinto es requerido';
         if (!/^\d{1}-\d{4}-\d{5}$/.test(value)) return 'Formato inválido (X-XXXX-XXXXX)';
         break;
-      case 'archivo_ci':
-      case 'archivo_no_militancia':
-      case 'curriculum':
-      case 'capturaPantalla':
-        if (!value) return 'Este archivo es requerido';
-        if (value instanceof File && value.size > 1024 * 1024) return 'El archivo no debe superar 1MB';
-        break;
+        case 'archivo_ci':
+        case 'curriculum':
+            if (!value) return 'Este archivo es requerido';
+            if (value instanceof File) {
+              if (value.size > 1024 * 1024) return 'El archivo no debe superar 1MB';
+              if (value.type !== 'application/pdf') {
+                return 'Formato no permitido. Solo se acepta archivo PDF';
+              }
+            }
+            break;
+          
+        case 'archivo_no_militancia':
+        case 'capturaPantalla':
+            if (!value) return 'Este archivo es requerido';
+            if (value instanceof File) {
+              if (value.size > 1024 * 1024) return 'El archivo no debe superar 1MB';
+              const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+              if (!allowedImageTypes.includes(value.type)) {
+                return 'Formato no permitido. Solo se aceptan archivos JPG, JPEG o PNG';
+              }
+            }
+            break;                 
     }
     return '';
   };
@@ -220,18 +235,32 @@ const ApplicantRegistration: React.FC = () => {
   // Handle verification
   const handleVerification = async (e: React.FormEvent) => {
     e.preventDefault();
+  
+    const ci = verificationData.cedula_identidad;
+  
+    // Validación local antes de continuar
+    if (!ci || typeof ci !== 'string') {
+      showMessage('error', 'La cédula de identidad es requerida.');
+      return;
+    }
+  
+    if (!/^\d{7,9}$/.test(ci)) {
+      showMessage('error', 'La cédula debe tener entre 7 y 9 dígitos numéricos.');
+      return;
+    }
+  
     setIsLoading(true);
-
+  
     try {
       const params = new URLSearchParams({
-        cedula_identidad: verificationData.cedula_identidad,
+        cedula_identidad: ci,
         complemento: verificationData.complemento,
         expedicion: verificationData.expedicion
       });
-
+  
       const response = await fetch(`http://localhost:3000/api/postulantes/existe?${params}`);
       const result = await response.json();
-
+  
       if (result.success) {
         if (result.existe) {
           showMessage('error', 'El postulante ya está registrado.');
@@ -248,126 +277,163 @@ const ApplicantRegistration: React.FC = () => {
       setIsLoading(false);
     }
   };
+  
 
   // Handle registration
-  const handleRegistration = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+// Handle registration
+const handleRegistration = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsLoading(true);
 
-    // Validate all fields
-    const newErrors: Record<string, string> = {};
+  // Validate all fields
+  const newErrors: Record<string, string> = {};
+  Object.entries(formData).forEach(([key, value]) => {
+    if (key !== 'requisitos') {
+      const error = validateField(key, value);
+      if (error) newErrors[key] = error;
+    }
+  });
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    setIsLoading(false);
+    showMessage('error', 'Por favor corrija los errores en el formulario.');
+    return;
+  }
+
+  try {
+    const formDataToSend = new FormData();
+    
+    // Add all form fields
     Object.entries(formData).forEach(([key, value]) => {
-      if (key !== 'requisitos') {
-        const error = validateField(key, value);
-        if (error) newErrors[key] = error;
+      if (key === 'requisitos') {
+        formDataToSend.append('requisitos', JSON.stringify(value));
+      } else if (value instanceof File) {
+        formDataToSend.append(key, value);
+      } else {
+        formDataToSend.append(key, String(value));
       }
     });
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      setIsLoading(false);
-      showMessage('error', 'Por favor corrija los errores en el formulario.');
-      return;
+    // Add verification data
+    formDataToSend.append('cedulaIdentidad', verificationData.cedula_identidad);
+    formDataToSend.append('complemento', verificationData.complemento);
+    formDataToSend.append('expedicion', verificationData.expedicion);
+
+    // Calculate experience
+    const experiencia_general = formData.experienciaEspecifica === 'SI' 
+      ? (formData.nroDeProcesos === '10' ? 10 : parseInt(formData.nroDeProcesos) || 0)
+      : 0;
+    formDataToSend.append('experiencia_general', experiencia_general.toString());
+
+    const response = await fetch('http://localhost:3000/api/postulantes', {
+      method: 'POST',
+      body: formDataToSend
+    });
+
+    if (!response.ok) {
+      throw new Error('Error en la respuesta del servidor');
     }
 
-    try {
-      const formDataToSend = new FormData();
+    // Verificar el tipo de contenido
+    const contentType = response.headers.get('content-type');
+    
+    if (contentType && contentType.includes('application/json')) {
+      // Manejar respuesta JSON con URL del PDF
+      const result = await response.json();
       
-      // Add all form fields
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'requisitos') {
-          formDataToSend.append('requisitos', JSON.stringify(value));
-        } else if (value instanceof File) {
-          formDataToSend.append(key, value);
-        } else {
-          formDataToSend.append(key, String(value));
+      if (result.success && result.pdfUrl) {
+        // Construir el nombre del archivo con el formato correcto
+        const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
+        
+        // Descargar el PDF desde la URL proporcionada
+        const pdfResponse = await fetch(`http://localhost:3000${result.pdfUrl}`);
+        if (!pdfResponse.ok) {
+          throw new Error('Error al descargar el PDF');
         }
-      });
-
-      // Add verification data
-      formDataToSend.append('cedulaIdentidad', verificationData.cedula_identidad);
-      formDataToSend.append('complemento', verificationData.complemento);
-      formDataToSend.append('expedicion', verificationData.expedicion);
-
-      // Calculate experience
-      const experiencia_general = formData.experienciaEspecifica === 'SI' 
-        ? (formData.nroDeProcesos === '10' ? 10 : parseInt(formData.nroDeProcesos) || 0)
-        : 0;
-      formDataToSend.append('experiencia_general', experiencia_general.toString());
-
-      const response = await fetch('http://localhost:3000/api/postulantes', {
-        method: 'POST',
-        body: formDataToSend
-      });
-
-      if (response.ok) {
-        // Handle PDF download
-        const blob = await response.blob();
+        
+        const blob = await pdfResponse.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'registro_postulante.pdf';
+        a.download = pdfFilename; // Usamos el nombre con el formato correcto
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
 
         showMessage('success', 'Registro exitoso. Descargando comprobante...');
-        
-        // Reset form after delay
-        setTimeout(() => {
-          setCurrentStep('verification');
-          setVerificationData({ cedula_identidad: '', complemento: '', expedicion: '' });
-          setFormData({
-            nombre: '',
-            apellidoPaterno: '',
-            apellidoMaterno: '',
-            fechaNacimiento: '',
-            gradoInstruccion: '',
-            carrera: '',
-            ciudad: '',
-            zona: '',
-            calleAvenida: '',
-            numeroDomicilio: '',
-            email: '',
-            celular: '',
-            marcaCelular: '',
-            modeloCelular: '',
-            tipoPostulacion: '',
-            idRecinto: '',
-            nombreRecinto: '',
-            municipioRecinto: '',
-            viveCercaRecinto: false,
-            experienciaEspecifica: '',
-            nroDeProcesos: '',
-            requisitos: {
-              esBoliviano: false,
-              registradoPadronElectoral: false,
-              cedulaIdentidadVigente: false,
-              disponibilidadTiempoCompleto: false,
-              celularConCamara: false,
-              android8_2OSuperior: false,
-              lineaEntel: false,
-              ningunaMilitanciaPolitica: false,
-              sinConflictosInstitucion: false,
-              cuentaConPowerBank: false,
-            },
-            archivo_ci: null,
-            archivo_no_militancia: null,
-            curriculum: null,
-            capturaPantalla: null,
-          });
-        }, 3000);
       } else {
-        showMessage('error', 'Error al registrar el postulante.');
+        showMessage('error', result.message || 'Error al registrar el postulante');
       }
-    } catch (error) {
-      showMessage('error', 'Error de conexión con el servidor.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    } else if (contentType && contentType.includes('application/pdf')) {
+      // Manejar respuesta directa de PDF (backup)
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `comprobante_${verificationData.cedula_identidad}.pdf`; // Formato correcto
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
+      showMessage('success', 'Registro exitoso. Descargando comprobante...');
+    } else {
+      throw new Error('Tipo de respuesta no reconocido');
+    }
+
+    // Reset form after delay
+    setTimeout(() => {
+      setCurrentStep('verification');
+      setVerificationData({ cedula_identidad: '', complemento: '', expedicion: '' });
+      setFormData({
+        nombre: '',
+        apellidoPaterno: '',
+        apellidoMaterno: '',
+        fechaNacimiento: '',
+        gradoInstruccion: '',
+        carrera: '',
+        ciudad: '',
+        zona: '',
+        calleAvenida: '',
+        numeroDomicilio: '',
+        email: '',
+        celular: '',
+        marcaCelular: '',
+        modeloCelular: '',
+        tipoPostulacion: '',
+        idRecinto: '',
+        nombreRecinto: '',
+        municipioRecinto: '',
+        viveCercaRecinto: false,
+        experienciaEspecifica: '',
+        nroDeProcesos: '',
+        requisitos: {
+          esBoliviano: false,
+          registradoPadronElectoral: false,
+          cedulaIdentidadVigente: false,
+          disponibilidadTiempoCompleto: false,
+          celularConCamara: false,
+          android8_2OSuperior: false,
+          lineaEntel: false,
+          ningunaMilitanciaPolitica: false,
+          sinConflictosInstitucion: false,
+          cuentaConPowerBank: false,
+        },
+        archivo_ci: null,
+        archivo_no_militancia: null,
+        curriculum: null,
+        capturaPantalla: null,
+      });
+    }, 3000);
+  } catch (error) {
+    console.error('Error en el registro:', error);
+    showMessage('error', error instanceof Error ? error.message : String(error));
+  } finally {
+    setIsLoading(false);
+  }
+};
   // Enable/disable number of processes select
   useEffect(() => {
     if (formData.experienciaEspecifica === 'NO') {
@@ -640,7 +706,7 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="text"
                     value={formData.ciudad}
-                    onChange={(e) => handleInputChange('ciudad', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, ''))}
+                    onChange={(e) => handleInputChange('ciudad', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, ''))}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.ciudad ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -656,7 +722,7 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="text"
                     value={formData.zona}
-                    onChange={(e) => handleInputChange('zona', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, ''))}
+                    onChange={(e) => handleInputChange('zona', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, ''))}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.zona ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -672,7 +738,7 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="text"
                     value={formData.calleAvenida}
-                    onChange={(e) => handleInputChange('calleAvenida', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, ''))}
+                    onChange={(e) => handleInputChange('calleAvenida', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, ''))}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.calleAvenida ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -688,7 +754,14 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="text"
                     value={formData.numeroDomicilio}
-                    onChange={(e) => handleInputChange('numeroDomicilio', e.target.value.replace(/\D/g, '').slice(0, 5))}
+                    onChange={(e) => {
+                      const inputValue = e.target.value
+                        .toUpperCase()
+                        .replace(/[^A-ZÁÉÍÓÚÑ0-9\s]/g, '')
+                        .slice(0, 5);
+
+                      handleInputChange('numeroDomicilio', inputValue);
+                    }}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.numeroDomicilio ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -830,8 +903,11 @@ const ApplicantRegistration: React.FC = () => {
                 </div>
                 
                 <div>
+                  <div>
+                    <img src="/recinto.jpg,," alt="" />
+                  </div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ID Recinto <span className="text-red-500">*</span>
+                    Código Recinto <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -945,89 +1021,95 @@ const ApplicantRegistration: React.FC = () => {
 
             {/* Documentation */}
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <div className="flex items-center gap-2 mb-6">
-                <FileText className="w-5 h-5 text-blue-600" />
-                <h3 className="text-lg font-semibold">Documentación</h3>
+            <div className="flex items-center gap-2 mb-6">
+              <FileText className="w-5 h-5 text-blue-600" />
+              <h3 className="text-lg font-semibold">Documentación</h3>
+            </div>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                  <img src="/ci.jpg" alt="CI" className="w-6 h-6" />
+                  Archivo CI <span className="text-red-500">*</span>
+                </label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Cédula de identidad Anverso y Reverso (Solo PDF Max: 1MB)
+                </p>
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={(e) => handleInputChange('archivo_ci', e.target.files?.[0] || null)}
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.archivo_ci ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  required
+                />
+                {errors.archivo_ci && <p className="text-red-500 text-xs mt-1">{errors.archivo_ci}</p>}
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Archivo CI <span className="text-red-500">*</span>
-                  </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Cédula de identidad Anverso y Reverso (Solo PDF Max: 1MB)
-                  </p>
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => handleInputChange('archivo_ci', e.target.files?.[0] || null)}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.archivo_ci ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  />
-                  {errors.archivo_ci && <p className="text-red-500 text-xs mt-1">{errors.archivo_ci}</p>}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    No Militancia <span className="text-red-500">*</span>
-                  </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Captura de pantalla No Tener Militancia Política (Solo PDF Max: 1MB)
-                  </p>
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => handleInputChange('archivo_no_militancia', e.target.files?.[0] || null)}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.archivo_no_militancia ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  />
-                  {errors.archivo_no_militancia && <p className="text-red-500 text-xs mt-1">{errors.archivo_no_militancia}</p>}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hoja de Vida <span className="text-red-500">*</span>
-                  </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Hoja De Vida No Documentada (Solo PDF Max: 1MB)
-                  </p>
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => handleInputChange('curriculum', e.target.files?.[0] || null)}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.curriculum ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  />
-                  {errors.curriculum && <p className="text-red-500 text-xs mt-1">{errors.curriculum}</p>}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Captura Celular <span className="text-red-500">*</span>
-                  </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Captura de Pantalla Características del Equipo Celular (Solo PDF Max: 1MB)
-                  </p>
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => handleInputChange('capturaPantalla', e.target.files?.[0] || null)}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.capturaPantalla ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  />
-                  {errors.capturaPantalla && <p className="text-red-500 text-xs mt-1">{errors.capturaPantalla}</p>}
-                </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  No Militancia <span className="text-red-500">*</span>
+                </label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Captura de pantalla No Tener Militancia Política (Solo JPG, JPEG o PNG. Max: 1MB)
+                </p>
+                <input
+                  type="file"
+                  accept=".jpg, .jpeg, .png"
+                  onChange={(e) => handleInputChange('archivo_no_militancia', e.target.files?.[0] || null)}
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.archivo_no_militancia ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  required
+                />
+                {errors.archivo_no_militancia && (
+                  <p className="text-red-500 text-xs mt-1">{errors.archivo_no_militancia}</p>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Hoja de Vida <span className="text-red-500">*</span>
+                </label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Hoja De Vida No Documentada (Solo PDF Max: 1MB)
+                </p>
+                <input
+                  type="file"
+                  accept=".pdf"
+                  onChange={(e) => handleInputChange('curriculum', e.target.files?.[0] || null)}
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.curriculum ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  required
+                />
+                {errors.curriculum && <p className="text-red-500 text-xs mt-1">{errors.curriculum}</p>}
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Captura Celular <span className="text-red-500">*</span>
+                </label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Captura de Pantalla Características del Equipo Celular (Solo JPG, JPEG o PNG. Max: 1MB)
+                </p>
+                <input
+                  type="file"
+                  accept=".jpg, .jpeg, .png"
+                  onChange={(e) => handleInputChange('capturaPantalla', e.target.files?.[0] || null)}
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    errors.capturaPantalla ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                  required
+                />
+                {errors.capturaPantalla && (
+                  <p className="text-red-500 text-xs mt-1">{errors.capturaPantalla}</p>
+                )}
               </div>
             </div>
+          </div>
+
 
             {/* Experience */}
             <div className="bg-white rounded-lg shadow-lg p-6">
