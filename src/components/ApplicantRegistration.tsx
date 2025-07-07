@@ -258,7 +258,7 @@ const ApplicantRegistration: React.FC = () => {
         expedicion: verificationData.expedicion
       });
   
-      const response = await fetch(`http://localhost:3000/api/postulantes/existe?${params}`);
+      const response = await fetch(`http://localhost:8000/api/postulantes/existe?${params}`);
       const result = await response.json();
   
       if (result.success) {
@@ -326,7 +326,7 @@ const handleRegistration = async (e: React.FormEvent) => {
       : 0;
     formDataToSend.append('experiencia_general', experiencia_general.toString());
 
-    const response = await fetch('http://localhost:3000/api/postulantes', {
+    const response = await fetch('http://localhost:8000/api/postulantes', {
       method: 'POST',
       body: formDataToSend
     });
@@ -347,7 +347,7 @@ const handleRegistration = async (e: React.FormEvent) => {
         const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
         
         // Descargar el PDF desde la URL proporcionada
-        const pdfResponse = await fetch(`http://localhost:3000${result.pdfUrl}`);
+        const pdfResponse = await fetch(`http://localhost:8000${result.pdfUrl}`);
         if (!pdfResponse.ok) {
           throw new Error('Error al descargar el PDF');
         }
@@ -485,6 +485,10 @@ const handleRegistration = async (e: React.FormEvent) => {
         {/* Verification Form */}
         {currentStep === 'verification' && (
           <div className="bg-white rounded-lg shadow-lg">
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+              <div></div><div className="flex justify-center"><img src="logoOEP.png" className="h-22" /></div><div></div>
+            </div>
+            
             <div className="p-6">
               <div className="flex items-center gap-2 mb-6">
                 <Search className="w-5 h-5 text-blue-600" />
@@ -868,6 +872,7 @@ const handleRegistration = async (e: React.FormEvent) => {
               </div>
               
               <div className="mb-4 p-4 bg-blue-50 rounded-lg">
+              <img src="/recinto.jpg" className="h-150 object-contain" />
                 <p className="text-sm text-blue-800 mb-2">
                   En el mapa seleccione el recinto en el cual desea postular para operador SIREPRE excepto aquellos recintos RESTRINGIDO (Cárceles)
                 </p>
@@ -1027,87 +1032,94 @@ const handleRegistration = async (e: React.FormEvent) => {
             </div>
             
             <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                  <img src="/ci.jpg" alt="CI" className="w-6 h-6" />
-                  Archivo CI <span className="text-red-500">*</span>
-                </label>
-                <p className="text-xs text-gray-500 mb-2">
-                  Cédula de identidad Anverso y Reverso (Solo PDF Max: 1MB)
-                </p>
-                <input
-                  type="file"
-                  accept=".pdf"
-                  onChange={(e) => handleInputChange('archivo_ci', e.target.files?.[0] || null)}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.archivo_ci ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  required
-                />
-                {errors.archivo_ci && <p className="text-red-500 text-xs mt-1">{errors.archivo_ci}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  No Militancia <span className="text-red-500">*</span>
-                </label>
-                <p className="text-xs text-gray-500 mb-2">
-                  Captura de pantalla No Tener Militancia Política (Solo JPG, JPEG o PNG. Max: 1MB)
-                </p>
-                <input
-                  type="file"
-                  accept=".jpg, .jpeg, .png"
-                  onChange={(e) => handleInputChange('archivo_no_militancia', e.target.files?.[0] || null)}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.archivo_no_militancia ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  required
-                />
-                {errors.archivo_no_militancia && (
-                  <p className="text-red-500 text-xs mt-1">{errors.archivo_no_militancia}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Hoja de Vida <span className="text-red-500">*</span>
-                </label>
-                <p className="text-xs text-gray-500 mb-2">
-                  Hoja De Vida No Documentada (Solo PDF Max: 1MB)
-                </p>
-                <input
-                  type="file"
-                  accept=".pdf"
-                  onChange={(e) => handleInputChange('curriculum', e.target.files?.[0] || null)}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.curriculum ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  required
-                />
-                {errors.curriculum && <p className="text-red-500 text-xs mt-1">{errors.curriculum}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Captura Celular <span className="text-red-500">*</span>
-                </label>
-                <p className="text-xs text-gray-500 mb-2">
-                  Captura de Pantalla Características del Equipo Celular (Solo JPG, JPEG o PNG. Max: 1MB)
-                </p>
-                <input
-                  type="file"
-                  accept=".jpg, .jpeg, .png"
-                  onChange={(e) => handleInputChange('capturaPantalla', e.target.files?.[0] || null)}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.capturaPantalla ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  required
-                />
-                {errors.capturaPantalla && (
-                  <p className="text-red-500 text-xs mt-1">{errors.capturaPantalla}</p>
-                )}
-              </div>
+            {/* Sección 1: Archivo CI */}
+            <div className="p-4 bg-gray-100 rounded-lg shadow">
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                Archivo CI <span className="text-red-500">*</span>
+              </label>
+              <p className="text-xs text-gray-500 mb-2">
+                Cédula de identidad Anverso y Reverso (Solo PDF Max: 1MB)
+              </p>
+              <img src="/ci.jpg" className="h-[150px] object-contain mb-2" />
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => handleInputChange('archivo_ci', e.target.files?.[0] || null)}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.archivo_ci ? 'border-red-500' : 'border-gray-300'
+                }`}
+                required
+              />
+              {errors.archivo_ci && <p className="text-red-500 text-xs mt-1">{errors.archivo_ci}</p>}
             </div>
+
+            {/* Sección 2: No Militancia */}
+            <div className="p-4 bg-white rounded-lg shadow">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                No Militancia <span className="text-red-500">*</span>
+              </label>
+              <p className="text-xs text-gray-500 mb-2">
+                Captura de pantalla No Tener Militancia Política (Solo JPG, JPEG o PNG. Max: 1MB)
+              </p>
+              <img src="/yoparticipo.png" className="h-[150px] object-contain mb-2" />
+              <input
+                type="file"
+                accept=".jpg, .jpeg, .png"
+                onChange={(e) => handleInputChange('archivo_no_militancia', e.target.files?.[0] || null)}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.archivo_no_militancia ? 'border-red-500' : 'border-gray-300'
+                }`}
+                required
+              />
+              {errors.archivo_no_militancia && (
+                <p className="text-red-500 text-xs mt-1">{errors.archivo_no_militancia}</p>
+              )}
+            </div>
+
+            {/* Sección 3: Hoja de Vida */}
+            <div className="p-4 bg-gray-50 rounded-lg shadow">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Hoja de Vida <span className="text-red-500">*</span>
+              </label>
+              <p className="text-xs text-gray-500 mb-2">
+                Hoja De Vida No Documentada (Solo PDF Max: 1MB)
+              </p>
+              <img src="/cv.jpg" className="h-[150px] object-contain mb-2" />
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={(e) => handleInputChange('curriculum', e.target.files?.[0] || null)}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.curriculum ? 'border-red-500' : 'border-gray-300'
+                }`}
+                required
+              />
+              {errors.curriculum && <p className="text-red-500 text-xs mt-1">{errors.curriculum}</p>}
+            </div>
+
+            {/* Sección 4: Captura Celular */}
+            <div className="p-4 bg-white rounded-lg shadow">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Captura Celular <span className="text-red-500">*</span>
+              </label>
+              <p className="text-xs text-gray-500 mb-2">
+                Captura de Pantalla CARACTERISTICAS DEL EQUIPO CELULAR (Solo JPG, JPEG o PNG. Max: 1MB)
+              </p>
+              <img src="/android.jpg" className="h-[350px] object-contain mb-2" />
+              <input
+                type="file"
+                accept=".jpg, .jpeg, .png"
+                onChange={(e) => handleInputChange('capturaPantalla', e.target.files?.[0] || null)}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.capturaPantalla ? 'border-red-500' : 'border-gray-300'
+                }`}
+                required
+              />
+              {errors.capturaPantalla && (
+                <p className="text-red-500 text-xs mt-1">{errors.capturaPantalla}</p>
+              )}
+            </div>
+          </div>
           </div>
 
 
