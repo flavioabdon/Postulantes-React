@@ -1005,16 +1005,16 @@ const handleRegistration = async (e: React.FormEvent) => {
                       className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                     />
                     <label htmlFor={key} className="text-sm text-gray-700">
-                      {key === 'esBoliviano' && 'Es boliviano'}
-                      {key === 'registradoPadronElectoral' && 'Registrado en padrón electoral'}
-                      {key === 'cedulaIdentidadVigente' && 'CI vigente'}
+                      {key === 'esBoliviano' && 'Ser Boliviano'}
+                      {key === 'registradoPadronElectoral' && 'Estar registrado en el padrón electoral'}
+                      {key === 'cedulaIdentidadVigente' && 'Contar con CI vigente'}
                       {key === 'disponibilidadTiempoCompleto' && 'Disponibilidad tiempo completo'}
-                      {key === 'celularConCamara' && 'Celular con cámara'}
-                      {key === 'android8_2OSuperior' && 'Android 8.2 o superior'}
-                      {key === 'lineaEntel' && 'Línea Entel'}
-                      {key === 'ningunaMilitanciaPolitica' && 'Ninguna militancia política'}
+                      {key === 'celularConCamara' && 'Contar con celular con cámara'}
+                      {key === 'android8_2OSuperior' && 'Contar con celular con Android 8.2 o superior'}
+                      {key === 'lineaEntel' && 'Contar con línea Entel'}
+                      {key === 'ningunaMilitanciaPolitica' && 'No contar con militancia política'}
                       {key === 'sinConflictosInstitucion' && 'Sin conflictos con la institución'}
-                      {key === 'cuentaConPowerBank' && 'Cuenta con Power Bank'}
+                      {key === 'cuentaConPowerBank' && 'Contar con PowerBank (Bateria Externa)'}
                     </label>
                   </div>
                 ))}
