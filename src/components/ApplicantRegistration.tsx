@@ -1056,7 +1056,7 @@ const handleRegistration = async (e: React.FormEvent) => {
                 No Militancia <span className="text-red-500">*</span>
               </label>
               <p className="text-xs text-gray-500 mb-2">
-                Captura de pantalla No Tener Militancia Política (Solo JPG, JPEG o PNG. Max: 1MB)
+                Captura de pantalla (Yo Participo) No tener Militancia Política(Solo JPG, JPEG o PNG. Max: 1MB)
               </p>
               <img src="/yoparticipo.png" className="h-[150px] object-contain mb-2" />
               <input
