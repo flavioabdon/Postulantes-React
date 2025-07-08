@@ -138,7 +138,7 @@ const ApplicantRegistration: React.FC = () => {
     switch (name) {
       case 'cedula_identidad':
         if (!value || typeof value !== 'string') return 'La cédula de identidad es requerida';
-        if (!/^\d{7,9}$/.test(value)) return 'La cédula debe tener entre 7 y 9 dígitos';        
+        if (!/^\d{4,9}$/.test(value)) return 'La cédula debe tener entre 4 y 9 dígitos';        
         break;
       case 'expedicion':
         if (!value) return 'La expedición es requerida';
@@ -244,8 +244,8 @@ const ApplicantRegistration: React.FC = () => {
       return;
     }
   
-    if (!/^\d{7,9}$/.test(ci)) {
-      showMessage('error', 'La cédula debe tener entre 7 y 9 dígitos numéricos.');
+    if (!/^\d{4,9}$/.test(ci)) {
+      showMessage('error', 'La cédula debe tener entre 4 y 9 dígitos numéricos.');
       return;
     }
   
@@ -449,6 +449,7 @@ const handleRegistration = async (e: React.FormEvent) => {
   }, [formData.gradoInstruccion]);
 
   return (
+    
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
@@ -463,7 +464,6 @@ const handleRegistration = async (e: React.FormEvent) => {
             </p>
           </div>
         </div>
-
         {/* Message */}
         {message && (
           <div className={`mb-6 p-4 rounded-lg border ${
@@ -485,10 +485,7 @@ const handleRegistration = async (e: React.FormEvent) => {
         {/* Verification Form */}
         {currentStep === 'verification' && (
           <div className="bg-white rounded-lg shadow-lg">
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-              <div></div><div className="flex justify-center"><img src="logoOEP.png" className="h-22" /></div><div></div>
-            </div>
-            
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-4'><div></div><div className="flex justify-center"><img src="logoOEP.png" className="h-15" /></div><div></div></div>
             <div className="p-6">
               <div className="flex items-center gap-2 mb-6">
                 <Search className="w-5 h-5 text-blue-600" />
