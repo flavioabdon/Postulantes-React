@@ -258,7 +258,7 @@ const ApplicantRegistration: React.FC = () => {
         expedicion: verificationData.expedicion
       });
   
-      const response = await fetch(`http://localhost:8000/api/postulantes/existe?${params}`);
+      const response = await fetch(`http://34.176.125.198:8000/api/postulantes/existe?${params}`);
       const result = await response.json();
   
       if (result.success) {
@@ -326,7 +326,7 @@ const handleRegistration = async (e: React.FormEvent) => {
       : 0;
     formDataToSend.append('experiencia_general', experiencia_general.toString());
 
-    const response = await fetch('http://localhost:8000/api/postulantes', {
+    const response = await fetch('http://34.176.125.198:8000/api/postulantes', {
       method: 'POST',
       body: formDataToSend
     });
@@ -347,7 +347,7 @@ const handleRegistration = async (e: React.FormEvent) => {
         const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
         
         // Descargar el PDF desde la URL proporcionada
-        const pdfResponse = await fetch(`http://localhost:8000${result.pdfUrl}`);
+        const pdfResponse = await fetch(`http://34.176.125.198:8000${result.pdfUrl}`);
         if (!pdfResponse.ok) {
           throw new Error('Error al descargar el PDF');
         }
