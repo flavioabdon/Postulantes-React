@@ -150,7 +150,7 @@ const ApplicantRegistration: React.FC = () => {
       case 'fechaNacimiento':
         if (!value || typeof value !== 'string') return 'La fecha de nacimiento es requerida';
         const birthDate = new Date(value);
-        const cutoffDate = new Date('2005-08-17');
+        const cutoffDate = new Date('2007-08-17');
         if (birthDate > cutoffDate) return 'Debe ser mayor de edad';
         break;
       case 'gradoInstruccion':
@@ -646,7 +646,7 @@ const handleRegistration = async (e: React.FormEvent) => {
                     type="date"
                     value={formData.fechaNacimiento}
                     onChange={(e) => handleInputChange('fechaNacimiento', e.target.value)}
-                    max="2005-08-17"
+                    max="2007-08-17"
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.fechaNacimiento ? 'border-red-500' : 'border-gray-300'
                     }`}
