@@ -1009,7 +1009,7 @@ const handleRegistration = async (e: React.FormEvent) => {
                       {key === 'registradoPadronElectoral' && 'Estar registrado en el padrón electoral'}
                       {key === 'cedulaIdentidadVigente' && 'Contar con CI vigente'}
                       {key === 'disponibilidadTiempoCompleto' && 'Disponibilidad tiempo completo'}
-                      {key === 'celularConCamara' && 'Contar con celular con cámara'}
+                      {key === 'celularConCamara' && 'No contar con sentencia ejecutoriadas'}
                       {key === 'android8_2OSuperior' && 'Contar con celular con Android 8.2 o superior'}
                       {key === 'lineaEntel' && 'Contar con línea Entel'}
                       {key === 'ningunaMilitanciaPolitica' && 'No contar con militancia política'}
