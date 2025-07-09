@@ -462,7 +462,7 @@ const ApplicantRegistration: React.FC = () => {
 
       setTimeout(() => {
         handleNewRegistration();
-      }, 3000);
+      }, 10000);
     } catch (error) {
       console.error('Error en el registro:', error);
       showMessage('error', error instanceof Error ? error.message : String(error));
