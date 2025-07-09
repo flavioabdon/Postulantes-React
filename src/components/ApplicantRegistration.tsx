@@ -189,7 +189,7 @@ const ApplicantRegistration: React.FC = () => {
         case 'curriculum':
             if (!value) return 'Este archivo es requerido';
             if (value instanceof File) {
-              if (value.size > 1024 * 1024) return 'El archivo no debe superar 1MB';
+              if (value.size > 3* (1024 * 1024)) return 'El archivo no debe superar 3MB';
               if (value.type !== 'application/pdf') {
                 return 'Formato no permitido. Solo se acepta archivo PDF';
               }
@@ -200,7 +200,7 @@ const ApplicantRegistration: React.FC = () => {
         case 'capturaPantalla':
             if (!value) return 'Este archivo es requerido';
             if (value instanceof File) {
-              if (value.size > 1024 * 1024) return 'El archivo no debe superar 1MB';
+              if (value.size > 3*(1024 * 1024)) return 'El archivo no debe superar 3MB';
               const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
               if (!allowedImageTypes.includes(value.type)) {
                 return 'Formato no permitido. Solo se aceptan archivos JPG, JPEG o PNG';
@@ -1079,7 +1079,7 @@ const handleRegistration = async (e: React.FormEvent) => {
                 Hoja de Vida <span className="text-red-500">*</span>
               </label>
               <p className="text-xs text-gray-500 mb-2">
-                Hoja De Vida No Documentada (Solo PDF Max: 1MB)
+                Hoja De Vida No Documentada (Solo PDF Max: 3MB)
               </p>
               <img src="/cv.jpg" className="h-[150px] object-contain mb-2" />
               <input
@@ -1100,7 +1100,7 @@ const handleRegistration = async (e: React.FormEvent) => {
                 Captura Celular <span className="text-red-500">*</span>
               </label>
               <p className="text-xs text-gray-500 mb-2">
-                Captura de Pantalla CARACTERISTICAS DEL EQUIPO CELULAR (Solo JPG, JPEG o PNG. Max: 1MB)
+                Captura de Pantalla CARACTERISTICAS DEL EQUIPO CELULAR (Solo JPG, JPEG o PNG. Max: 3MB)
               </p>
               <img src="/android.jpg" className="h-[350px] object-contain mb-2" />
               <input
