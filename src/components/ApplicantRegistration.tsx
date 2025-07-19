@@ -540,7 +540,7 @@ const ApplicantRegistration: React.FC = () => {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                 <p className="text-yellow-800 text-sm">
                   <strong>IMPORTANTE:</strong> La postulación solo se puede realizar UNA SOLA VEZ. 
-                  Verifique que los datos introducidos sean correctos.
+                  Verifique que los datos introducidos sean correctos. (Postulación abierta mientras el formulario este disponible)
                 </p>
               </div>
 
