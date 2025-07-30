@@ -130,11 +130,11 @@ const ApplicantRegistration: React.FC = () => {
     celular: '',
     marcaCelular: '',
     modeloCelular: '',
-    tipoPostulacion: '',
-    idRecinto: '',
-    nombreRecinto: '',
-    municipioRecinto: '',
-    viveCercaRecinto: false,
+    tipoPostulacion: 'OPERADOR DE TRANSMISION SIREPRE PROVINCIA',
+    idRecinto: '1-1111-11111',
+    nombreRecinto: 'VACIO',
+    municipioRecinto: 'VACIO',
+    viveCercaRecinto: true,
     experienciaEspecifica: '',
     nroDeProcesos: '',
     requisitos: {
@@ -196,11 +196,11 @@ const ApplicantRegistration: React.FC = () => {
       celular: '',
       marcaCelular: '',
       modeloCelular: '',
-      tipoPostulacion: '',
-      idRecinto: '',
-      nombreRecinto: '',
-      municipioRecinto: '',
-      viveCercaRecinto: false,
+      tipoPostulacion: 'OPERADOR DE TRANSMISION SIREPRE PROVINCIA',
+      idRecinto: '1-1111-11111',
+      nombreRecinto: 'VACIO',
+      municipioRecinto: 'VACIO',
+      viveCercaRecinto: true,
       experienciaEspecifica: '',
       nroDeProcesos: '',
       requisitos: {
@@ -268,10 +268,6 @@ const ApplicantRegistration: React.FC = () => {
         if (!value || typeof value !== 'string') return 'El celular es requerido';
         if (!/^[6-7]\d{7}$/.test(value)) return 'Formato inválido (debe comenzar con 6 o 7 y tener 8 dígitos)';
         break;
-      case 'tipoPostulacion':
-      case 'idRecinto':
-      case 'nombreRecinto':
-      case 'municipioRecinto':
       case 'experienciaEspecifica':
         if (!value) return 'Este campo es requerido';
         break;
@@ -492,7 +488,7 @@ const ApplicantRegistration: React.FC = () => {
               <div>
                 <h1 className="text-2xl font-bold flex items-center gap-2">
                   <User className="w-6 h-6" />
-                  Registro de Postulantes OPERADORES RURALES
+                  Registro de Postulante
                 </h1>
                 <p className="text-blue-100 mt-2">
                   Complete el formulario para registrarse como postulante
@@ -540,7 +536,7 @@ const ApplicantRegistration: React.FC = () => {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                 <p className="text-yellow-800 text-sm">
                   <strong>IMPORTANTE:</strong> La postulación solo se puede realizar UNA SOLA VEZ. 
-                  Verifique que los datos introducidos sean correctos.
+                  Verifique que los datos introducidos sean correctos. (Postulación abierta mientras el formulario este disponible)
                 </p>
               </div>
 
@@ -901,7 +897,6 @@ const ApplicantRegistration: React.FC = () => {
               </div>
             </div>
 
-
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-center gap-2 mb-6">
                 <CheckSquare className="w-5 h-5 text-blue-600" />
@@ -1025,42 +1020,6 @@ const ApplicantRegistration: React.FC = () => {
                     <p className="text-red-500 text-xs mt-1">{errors.capturaPantalla}</p>
                   )}
                 </div>
-
-                    <div className="p-4 bg-gray-100 rounded-lg shadow">
-                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
-                      Certificado Beneficiario SIGEP <span className="text-red-500">*</span>
-                    </label>
-                      <a
-                        href="https://www.youtube.com/watch?v=LBvJg1ftFmM"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline inline-flex items-center gap-1"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 576 512"
-                          className="text-red-600"
-                        >
-                          <path d="M549.7 124.1c-6.3-23.7-24.9-42.4-48.5-48.7C456.7 64 288 64 288 64s-168.7 0-213.2 11.4c-23.6 6.3-42.2 25-48.5 48.7C16 168.6 16 256 16 256s0 87.4 10.3 131.9c6.3 23.7 24.9 42.4 48.5 48.7C119.3 448 288 448 288 448s168.7 0 213.2-11.4c23.6-6.3 42.2-25 48.5-48.7C560 343.4 560 256 560 256s0-87.4-10.3-131.9zM232 336V176l142 80-142 80z" />
-                        </svg>
-                        Ver Video Tutorial Apertura SIGEP Beneficiario
-                      </a>
-                    <img src="/sigep.png" className="h-[150px] object-contain mb-2" />
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      onChange={(e) => handleInputChange('archivo_sigep', e.target.files?.[0] || null)}
-                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                        errors.archivo_sigep ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                      required
-                    />
-                    {errors.archivo_sigep && <p className="text-red-500 text-xs mt-1">{errors.archivo_sigep}</p>}
-                  </div>
-
               </div>
             </div>
 
@@ -1130,11 +1089,11 @@ const ApplicantRegistration: React.FC = () => {
                     celular: '',
                     marcaCelular: '',
                     modeloCelular: '',
-                    tipoPostulacion: '',
-                    idRecinto: '',
-                    nombreRecinto: '',
-                    municipioRecinto: '',
-                    viveCercaRecinto: false,
+                    tipoPostulacion: 'OPERADOR DE TRANSMISION SIREPRE PROVINCIA',
+                    idRecinto: '1-1111-11111',
+                    nombreRecinto: 'VACIO',
+                    municipioRecinto: 'VACIO',
+                    viveCercaRecinto: true,
                     experienciaEspecifica: '',
                     nroDeProcesos: '',
                     requisitos: {
