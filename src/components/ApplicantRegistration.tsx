@@ -1025,6 +1025,27 @@ const ApplicantRegistration: React.FC = () => {
                     <p className="text-red-500 text-xs mt-1">{errors.capturaPantalla}</p>
                   )}
                 </div>
+
+                    <div className="p-4 bg-gray-100 rounded-lg shadow">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      Certificado SIGEP <span className="text-red-500">*</span>
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">
+                      Certificado de no adeudo del SIGEP (Solo PDF Max: 3MB)
+                    </p>
+                    <img src="/sigep.jpg" className="h-[150px] object-contain mb-2" />
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(e) => handleInputChange('archivo_sigep', e.target.files?.[0] || null)}
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.archivo_sigep ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      required
+                    />
+                    {errors.archivo_sigep && <p className="text-red-500 text-xs mt-1">{errors.archivo_sigep}</p>}
+                  </div>
+
               </div>
             </div>
 
