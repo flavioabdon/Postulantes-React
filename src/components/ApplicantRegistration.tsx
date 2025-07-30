@@ -1030,14 +1030,24 @@ const ApplicantRegistration: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                       Certificado Beneficiario SIGEP <span className="text-red-500">*</span>
                     </label>
-                    <a
-                      href="https://www.youtube.com/watch?v=LBvJg1ftFmM"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
-                    >
-                      Ver Video Tutorial Apertura SIGEP Beneficiario
-                    </a>
+                      <a
+                        href="https://www.youtube.com/watch?v=LBvJg1ftFmM"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:underline inline-flex items-center gap-1"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          viewBox="0 0 576 512"
+                          className="text-red-600"
+                        >
+                          <path d="M549.7 124.1c-6.3-23.7-24.9-42.4-48.5-48.7C456.7 64 288 64 288 64s-168.7 0-213.2 11.4c-23.6 6.3-42.2 25-48.5 48.7C16 168.6 16 256 16 256s0 87.4 10.3 131.9c6.3 23.7 24.9 42.4 48.5 48.7C119.3 448 288 448 288 448s168.7 0 213.2-11.4c23.6-6.3 42.2-25 48.5-48.7C560 343.4 560 256 560 256s0-87.4-10.3-131.9zM232 336V176l142 80-142 80z" />
+                        </svg>
+                        Ver Video Tutorial Apertura SIGEP Beneficiario
+                      </a>
                     <img src="/sigep.png" className="h-[150px] object-contain mb-2" />
                     <input
                       type="file"
