@@ -1030,11 +1030,14 @@ const ApplicantRegistration: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                       Certificado Beneficiario SIGEP <span className="text-red-500">*</span>
                     </label>
-                    <p className="text-xs text-gray-500 mb-2">
-                      Certificado Registro Beneficiario SIGEP (Solo PDF Max: 3MB) 
-                      <br />
-                      <a href="https://www.youtube.com/watch?v=LBvJg1ftFmM">Ver Video Tutorial Apertura SIGEP Beneficiario</a>
-                    </p>
+                    <a
+                      href="https://www.youtube.com/watch?v=LBvJg1ftFmM"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:underline"
+                    >
+                      Ver Video Tutorial Apertura SIGEP Beneficiario
+                    </a>
                     <img src="/sigep.png" className="h-[150px] object-contain mb-2" />
                     <input
                       type="file"
