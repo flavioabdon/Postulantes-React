@@ -244,7 +244,7 @@ const ApplicantRegistration: React.FC = () => {
       case 'fechaNacimiento':
         if (!value || typeof value !== 'string') return 'La fecha de nacimiento es requerida';
         const birthDate = new Date(value);
-        const cutoffDate = new Date('2007-08-17');
+        const cutoffDate = new Date('2007-07-30');
         if (birthDate > cutoffDate) return 'Debe ser mayor de edad';
         break;
       case 'gradoInstruccion':
