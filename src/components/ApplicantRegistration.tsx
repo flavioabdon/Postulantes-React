@@ -492,7 +492,7 @@ const ApplicantRegistration: React.FC = () => {
               <div>
                 <h1 className="text-2xl font-bold flex items-center gap-2">
                   <User className="w-6 h-6" />
-                  Registro de Postulante
+                  Registro de Postulantes OPERADORES RURALES
                 </h1>
                 <p className="text-blue-100 mt-2">
                   Complete el formulario para registrarse como postulante
@@ -540,7 +540,7 @@ const ApplicantRegistration: React.FC = () => {
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
                 <p className="text-yellow-800 text-sm">
                   <strong>IMPORTANTE:</strong> La postulación solo se puede realizar UNA SOLA VEZ. 
-                  Verifique que los datos introducidos sean correctos. (Postulación abierta mientras el formulario este disponible)
+                  Verifique que los datos introducidos sean correctos.
                 </p>
               </div>
 
