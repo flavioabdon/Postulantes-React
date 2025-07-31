@@ -343,7 +343,7 @@ const ApplicantRegistration: React.FC = () => {
         expedicion: verificationData.expedicion
       });
   
-      const response = await fetch(`http://34.176.125.198:8000/api/postulantes/existe?${params}`);
+      const response = await fetch(`http://34.176.30.151:8000/api/postulantes/existe?${params}`);
       const result = await response.json();
   
       if (result.success) {
@@ -404,7 +404,7 @@ const ApplicantRegistration: React.FC = () => {
         : 0;
       formDataToSend.append('experiencia_general', experiencia_general.toString());
 
-      const response = await fetch('http://34.176.125.198:8000/api/postulantes', {
+      const response = await fetch('http://34.176.30.151:8000/api/postulantes', {
         method: 'POST',
         body: formDataToSend
       });
@@ -421,7 +421,7 @@ const ApplicantRegistration: React.FC = () => {
         if (result.success && result.pdfUrl) {
           const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
           
-          const pdfResponse = await fetch(`http://34.176.125.198:8000${result.pdfUrl}`);
+          const pdfResponse = await fetch(`http://34.176.30.151:8000${result.pdfUrl}`);
           if (!pdfResponse.ok) {
             throw new Error('Error al descargar el PDF');
           }
@@ -771,6 +771,7 @@ const ApplicantRegistration: React.FC = () => {
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.zona ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    placeholder="Ej:Zona Central"
                     required
                   />
                   {errors.zona && <p className="text-red-500 text-xs mt-1">{errors.zona}</p>}
@@ -787,6 +788,8 @@ const ApplicantRegistration: React.FC = () => {
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.calleAvenida ? 'border-red-500' : 'border-gray-300'
                     }`}
+                    placeholder="Ej:Avenida 16 de julio"
+
                     required
                   />
                   {errors.calleAvenida && <p className="text-red-500 text-xs mt-1">{errors.calleAvenida}</p>}
@@ -811,6 +814,7 @@ const ApplicantRegistration: React.FC = () => {
                       errors.numeroDomicilio ? 'border-red-500' : 'border-gray-300'
                     }`}
                     maxLength={5}
+                    placeholder="Ej:2050"
                     required
                   />
                   {errors.numeroDomicilio && <p className="text-red-500 text-xs mt-1">{errors.numeroDomicilio}</p>}
