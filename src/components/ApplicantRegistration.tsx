@@ -459,6 +459,9 @@ const ApplicantRegistration: React.FC = () => {
     }
   }, [formData.gradoInstruccion]);
 
+  const [tipoZonaSeleccionada, setTipoZonaSeleccionada] = useState('');
+  const [tipoCalleAvSeleccionada, setTipoCalleAvSeleccionada] = useState('');
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4">
@@ -741,41 +744,53 @@ const ApplicantRegistration: React.FC = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Zona <span className="text-red-500">*</span>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Seleccionar Zona o Urbanizacion <span className="text-red-500">*</span>
                   </label>
-                  <p>ZONA:</p>
+                  <select 
+                    value={tipoZonaSeleccionada}
+                    onChange={(e) => {
+                      const tipo = e.target.value;
+                      setTipoZonaSeleccionada(tipo)
+                      if (formData.zona) {
+                        const nombre = formData.zona.split(': ')[1] || '';
+                        handleInputChange('zona', tipo ? `${tipo}: ${nombre}` : '')
+                      }
+                    }}
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300"
+                    required
+                  >
+                    <option value="">-- Seleccionar --</option>
+                    <option value="ZONA">ZONA</option>
+                    <option value="URBANIZACION">URBANIZACION</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nombre de Zona o Urbanizacion <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
-                    value={formData.zona}
-                    onChange={(e) => handleInputChange('zona', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, ''))}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.zona ? 'border-red-500' : 'border-gray-300'
-                    }`}
+                    value={formData.zona?.split(': ')[1] || ''}
+                    onChange={(e) => {
+                      const nombre = e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, '');
+                      if (tipoZonaSeleccionada) {
+                        handleInputChange('zona', `${tipoZonaSeleccionada}: ${nombre}`)
+                      } else {
+                        handleInputChange('zona', nombre)
+                      }
+                    }}
+                    disabled = {!tipoZonaSeleccionada}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
+                        ${errors.zona ? 'border-red-500' : 'border-gray-300'} 
+                        ${!tipoZonaSeleccionada ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                     placeholder="Ej: SAN PEDRO"
                     required
                   />
                   {errors.zona && <p className="text-red-500 text-xs mt-1">{errors.zona}</p>}
                 </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Calle/Avenida <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.calleAvenida}
-                    onChange={(e) => handleInputChange('calleAvenida', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, ''))}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.calleAvenida ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="Ej:Avenida 16 de julio"
 
-                    required
-                  />
-                  {errors.calleAvenida && <p className="text-red-500 text-xs mt-1">{errors.calleAvenida}</p>}
-                </div>
-                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Número de Domicilio <span className="text-red-500">*</span>
@@ -800,6 +815,57 @@ const ApplicantRegistration: React.FC = () => {
                   />
                   {errors.numeroDomicilio && <p className="text-red-500 text-xs mt-1">{errors.numeroDomicilio}</p>}
                 </div>
+                
+                <div>
+                  <label className='block text-sm font-medium text-gray-700 mb-1'>
+                    Seleccionar Calle o Avenida <span className="text-red-500">*</span>
+                  </label>
+                  <select 
+                    value={tipoCalleAvSeleccionada}
+                    onChange={(e) => {
+                      const tipo = e.target.value;
+                      setTipoCalleAvSeleccionada(tipo)
+                      if (formData.calleAvenida) {
+                        const nombre = formData.calleAvenida.split(': ')[1] || '';
+                        handleInputChange('calleAvenida', tipo ? `${tipo}: ${nombre}` : '')
+                      }
+                    }}
+                    className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 border-gray-300"
+                    required
+                  >
+                    <option value="">-- Seleccionar --</option>
+                    <option value="CALLE">CALLE</option>
+                    <option value="AVENIDA">AVENIDA</option>
+                    <option value="PASAJE">PASAJE</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Calle/Avenida <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.calleAvenida?.split(': ')[1] || ''}
+                    onChange={(e) => {
+                      const nombre = e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, '');
+                      if (tipoCalleAvSeleccionada) {
+                        handleInputChange('calleAvenida', `${tipoCalleAvSeleccionada}: ${nombre}`)
+                      } else {
+                        handleInputChange('calleAvenida', nombre)
+                      }
+                    }}
+                    disabled = {!tipoCalleAvSeleccionada}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
+                        ${errors.calleAvenida ? 'border-red-500' : 'border-gray-300'} 
+                        ${!tipoCalleAvSeleccionada ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                    placeholder="Ej: LANDAETA"
+                    required
+                  />
+                  {errors.calleAvenida && <p className="text-red-500 text-xs mt-1">{errors.calleAvenida}</p>}
+                </div>
+                
+                
               </div>
             </div>
 
@@ -990,7 +1056,7 @@ const ApplicantRegistration: React.FC = () => {
 
                 <div className="p-4 bg-white rounded-lg shadow">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Certificado Ofimatica (opcional) <span className="text-red-500">*</span>
+                    Certificado Ofimatica (opcional)
                   </label>
                   <p className="text-xs text-gray-500 mb-2">
                     Imagen de certificado de ofimatica (Solo JPG, JPEG o PNG. Max: 3MB)
