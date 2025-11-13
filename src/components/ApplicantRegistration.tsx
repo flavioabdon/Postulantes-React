@@ -36,31 +36,23 @@ interface ApplicantData {
   numeroDomicilio: string;
   email: string;
   celular: string;
-  marcaCelular: string;
-  modeloCelular: string;
-  tipoPostulacion: string;
-  idRecinto: string;
-  nombreRecinto: string;
-  municipioRecinto: string;
-  viveCercaRecinto: boolean;
+  experienciaGeneral: string;
   experienciaEspecifica: string;
-  nroDeProcesos: string;
   requisitos: {
     esBoliviano: boolean;
     registradoPadronElectoral: boolean;
-    cedulaIdentidadVigente: boolean;
+    ciVigente: boolean;
     disponibilidadTiempoCompleto: boolean;
-    celularConCamara: boolean;
-    android8_2OSuperior: boolean;
     lineaEntel: boolean;
     ningunaMilitanciaPolitica: boolean;
     sinConflictosInstitucion: boolean;
-    cuentaConPowerBank: boolean;
+    sinSentenciaEjecutoriada: boolean;
   };
   archivo_ci: File | null;
   archivo_no_militancia: File | null;
-  curriculum: File | null;
-  capturaPantalla: File | null;
+  archivo_curriculum: File | null;
+  archivo_certificado_ofimatica: File | null;
+  cargoPostulacion : string;
 }
 
 const serializeFile = (file: File | null): string | null => {
@@ -92,8 +84,8 @@ const ApplicantRegistration: React.FC = () => {
         if (parsedData.formData) {
           parsedData.formData.archivo_ci = deserializeFile(parsedData.formData.archivo_ci);
           parsedData.formData.archivo_no_militancia = deserializeFile(parsedData.formData.archivo_no_militancia);
-          parsedData.formData.curriculum = deserializeFile(parsedData.formData.curriculum);
-          parsedData.formData.capturaPantalla = deserializeFile(parsedData.formData.capturaPantalla);
+          parsedData.formData.archivo_curriculum = deserializeFile(parsedData.formData.archivo_curriculum);
+          parsedData.formData.archivo_certificado_ofimatica = deserializeFile(parsedData.formData.archivo_certificado_ofimatica);
         }
         return parsedData;
       } catch (e) {
@@ -128,31 +120,23 @@ const ApplicantRegistration: React.FC = () => {
     numeroDomicilio: '',
     email: '',
     celular: '',
-    marcaCelular: '',
-    modeloCelular: '',
-    tipoPostulacion: 'OPERADOR DE TRANSMISION SIREPRE PROVINCIA',
-    idRecinto: '1-1111-11111',
-    nombreRecinto: 'VACIO',
-    municipioRecinto: 'VACIO',
-    viveCercaRecinto: true,
+    experienciaGeneral: '',
     experienciaEspecifica: '',
-    nroDeProcesos: '',
     requisitos: {
       esBoliviano: false,
       registradoPadronElectoral: false,
-      cedulaIdentidadVigente: false,
+      ciVigente: false,
       disponibilidadTiempoCompleto: false,
-      celularConCamara: false,
-      android8_2OSuperior: false,
       lineaEntel: false,
       ningunaMilitanciaPolitica: false,
       sinConflictosInstitucion: false,
-      cuentaConPowerBank: false,
+      sinSentenciaEjecutoriada: false,
     },
     archivo_ci: null,
     archivo_no_militancia: null,
-    curriculum: null,
-    capturaPantalla: null,
+    archivo_curriculum: null,
+    archivo_certificado_ofimatica: null,
+    cargoPostulacion: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -166,8 +150,8 @@ const ApplicantRegistration: React.FC = () => {
         ...formData,
         archivo_ci: serializeFile(formData.archivo_ci),
         archivo_no_militancia: serializeFile(formData.archivo_no_militancia),
-        curriculum: serializeFile(formData.curriculum),
-        capturaPantalla: serializeFile(formData.capturaPantalla),
+        archivo_curriculum: serializeFile(formData.archivo_curriculum),
+        archivo_certificado_ofimatica: serializeFile(formData.archivo_certificado_ofimatica),
       }
     };
     localStorage.setItem('applicantRegistrationData', JSON.stringify(stateToSave));
@@ -194,31 +178,23 @@ const ApplicantRegistration: React.FC = () => {
       numeroDomicilio: '',
       email: '',
       celular: '',
-      marcaCelular: '',
-      modeloCelular: '',
-      tipoPostulacion: 'OPERADOR DE TRANSMISION SIREPRE PROVINCIA',
-      idRecinto: '1-1111-11111',
-      nombreRecinto: 'VACIO',
-      municipioRecinto: 'VACIO',
-      viveCercaRecinto: true,
+      experienciaGeneral: '',
       experienciaEspecifica: '',
-      nroDeProcesos: '',
       requisitos: {
         esBoliviano: false,
         registradoPadronElectoral: false,
-        cedulaIdentidadVigente: false,
+        ciVigente: false,
         disponibilidadTiempoCompleto: false,
-        celularConCamara: false,
-        android8_2OSuperior: false,
         lineaEntel: false,
         ningunaMilitanciaPolitica: false,
         sinConflictosInstitucion: false,
-        cuentaConPowerBank: false,
+        sinSentenciaEjecutoriada: false
       },
       archivo_ci: null,
       archivo_no_militancia: null,
-      curriculum: null,
-      capturaPantalla: null,
+      archivo_curriculum: null,
+      archivo_certificado_ofimatica: null,
+      cargoPostulacion: '',
     });
     setMessage({ type: 'success', text: 'Formulario reiniciado para nuevo registro.' });
   };
@@ -268,15 +244,19 @@ const ApplicantRegistration: React.FC = () => {
         if (!value || typeof value !== 'string') return 'El celular es requerido';
         if (!/^[6-7]\d{7}$/.test(value)) return 'Formato inválido (debe comenzar con 6 o 7 y tener 8 dígitos)';
         break;
-      case 'experienciaEspecifica':
+      case 'experienciaGeneral':
         if (!value) return 'Este campo es requerido';
         break;
-      case 'idRecinto':
-        if (!value || typeof value !== 'string') return 'El ID del recinto es requerido';
-        if (!/^\d{1}-\d{4}-\d{5}$/.test(value)) return 'Formato inválido (X-XXXX-XXXXX)';
-        break;
       case 'archivo_ci':
-      case 'curriculum':
+        if (!value) return 'Este archivo es requerido';
+          if (value instanceof File) {
+            if (value.size > 3* (1024 * 1024)) return 'El archivo no debe superar 3MB';
+            if (value.type !== 'application/pdf') {
+              return 'Formato no permitido. Solo se acepta archivo PDF';
+            }
+          }
+          break;
+      case 'archivo_curriculum':
           if (!value) return 'Este archivo es requerido';
           if (value instanceof File) {
             if (value.size > 3* (1024 * 1024)) return 'El archivo no debe superar 3MB';
@@ -343,7 +323,7 @@ const ApplicantRegistration: React.FC = () => {
         expedicion: verificationData.expedicion
       });
   
-      const response = await fetch(`http://34.176.30.151:8000/api/postulantes/existe?${params}`);
+      const response = await fetch(`http://localhost:8000/api/postulantes/existe?${params}`);
       const result = await response.json();
   
       if (result.success) {
@@ -399,12 +379,12 @@ const ApplicantRegistration: React.FC = () => {
       formDataToSend.append('complemento', verificationData.complemento);
       formDataToSend.append('expedicion', verificationData.expedicion);
 
-      const experiencia_general = formData.experienciaEspecifica === 'SI' 
-        ? (formData.nroDeProcesos === '10' ? 10 : parseInt(formData.nroDeProcesos) || 0)
-        : 0;
-      formDataToSend.append('experiencia_general', experiencia_general.toString());
-
-      const response = await fetch('http://34.176.30.151:8000/api/postulantes', {
+     /* const experiencia_general = formData.experienciaGeneral.toString() 
+        ? (formData.experienciaGeneral === '10' ? '10' : formData.experienciaGeneral || '0')
+        : '0';
+      formDataToSend.append('experienciaGeneral', experiencia_general);*/
+      console.log(formDataToSend)
+      const response = await fetch('http://localhost:8000/api/postulantes', {
         method: 'POST',
         body: formDataToSend
       });
@@ -421,7 +401,7 @@ const ApplicantRegistration: React.FC = () => {
         if (result.success && result.pdfUrl) {
           const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
           
-          const pdfResponse = await fetch(`http://34.176.30.151:8000${result.pdfUrl}`);
+          const pdfResponse = await fetch(`http://localhost:8000${result.pdfUrl}`);
           if (!pdfResponse.ok) {
             throw new Error('Error al descargar el PDF');
           }
@@ -468,11 +448,11 @@ const ApplicantRegistration: React.FC = () => {
   };
 
   useEffect(() => {
-    if (formData.experienciaEspecifica === 'NO') {
-      setFormData(prev => ({ ...prev, nroDeProcesos: '' }));
+    if (formData.experienciaGeneral === 'NO') {
+      setFormData(prev => ({ ...prev, experienciaEspecifica: '' }));
     }
-  }, [formData.experienciaEspecifica]);
-
+  }, [formData.experienciaGeneral]);
+  
   useEffect(() => {
     if (!formData.gradoInstruccion || formData.gradoInstruccion === 'BACHILLER') {
       setFormData(prev => ({ ...prev, carrera: '' }));
@@ -764,6 +744,7 @@ const ApplicantRegistration: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Zona <span className="text-red-500">*</span>
                   </label>
+                  <p>ZONA:</p>
                   <input
                     type="text"
                     value={formData.zona}
@@ -771,7 +752,7 @@ const ApplicantRegistration: React.FC = () => {
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.zona ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Ej:Zona Central"
+                    placeholder="Ej: SAN PEDRO"
                     required
                   />
                   {errors.zona && <p className="text-red-500 text-xs mt-1">{errors.zona}</p>}
@@ -875,34 +856,34 @@ const ApplicantRegistration: React.FC = () => {
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-center gap-2 mb-6">
                 <Smartphone className="w-5 h-5 text-blue-600" />
-                <h3 className="text-lg font-semibold">Dispositivo Móvil</h3>
+                <h3 className="text-lg font-semibold">Cargo de Postulación</h3>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Marca del Celular
+                    Seleccione el cargo al desea postular:
                   </label>
-                  <input
-                    type="text"
-                    value={formData.marcaCelular}
-                    onChange={(e) => handleInputChange('marcaCelular', e.target.value.slice(0, 30))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxLength={30}
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Modelo del Celular
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.modeloCelular}
-                    onChange={(e) => handleInputChange('modeloCelular', e.target.value.slice(0, 30))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxLength={30}
-                  />
+                  <select
+                    value={formData.cargoPostulacion}
+                    onChange={(e) => handleInputChange('cargoPostulacion', e.target.value)}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.cargoPostulacion ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    required
+                  >
+                    <option value="">Seleccione...</option>
+                    <option value="COORDINADOR AREA RURAL">COORDINADOR AREA RURAL</option>
+                    <option value="COORDINADOR AREA URBANA">COORDINADOR AREA URBANA</option>
+                    <option value="TECNICO DE SOPORTE INFORMATICO RURAL">TECNICO DE SOPORTE INFORMATICO RURAL</option>
+                    <option value="TECNICO DE SOPORTE INFORMATICO  URBANO">TECNICO DE SOPORTE INFORMATICO  URBANO</option>
+                    <option value="AUXILIAR TECNICO">AUXILIAR TECNICO</option>
+                    <option value="TECNICO LOGISTICO">TECNICO LOGISTICO</option>
+                    <option value="NOTARIO OPERADOR RURAL">NOTARIO OPERADOR RURAL</option>
+                    <option value="ASISTENTE DE MEGACENTRO">ASISTENTE DE MEGACENTRO</option>
+                    <option value="CONTROL DE CALIDAD DE DOCUMENTOS">CONTROL DE CALIDAD DE DOCUMENTOS</option>
+                  </select>
+                  {errors.cargoPostulacion && <p className="text-red-500 text-xs mt-1">{errors.cargo_postulacion}</p>}
                 </div>
               </div>
             </div>
@@ -926,14 +907,12 @@ const ApplicantRegistration: React.FC = () => {
                     <label htmlFor={key} className="text-sm text-gray-700">
                       {key === 'esBoliviano' && 'Ser Boliviano'}
                       {key === 'registradoPadronElectoral' && 'Estar registrado en el padrón electoral'}
-                      {key === 'cedulaIdentidadVigente' && 'Contar con CI vigente'}
+                      {key === 'ciVigente' && 'Contar con CI vigente'}
                       {key === 'disponibilidadTiempoCompleto' && 'Disponibilidad tiempo completo'}
-                      {key === 'celularConCamara' && 'No contar con sentencia ejecutoriadas'}
-                      {key === 'android8_2OSuperior' && 'Contar con celular con Android 8.2 o superior'}
                       {key === 'lineaEntel' && 'Contar con línea Entel'}
                       {key === 'ningunaMilitanciaPolitica' && 'No contar con militancia política'}
                       {key === 'sinConflictosInstitucion' && 'Sin conflictos con la institución'}
-                      {key === 'cuentaConPowerBank' && 'Contar con PowerBank (Bateria Externa)'}
+                      {key === 'sinSentenciaEjecutoriada' && 'No tener sentencias ejecutoriadas'}
                     </label>
                   </div>
                 ))}
@@ -1000,7 +979,7 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="file"
                     accept=".pdf"
-                    onChange={(e) => handleInputChange('curriculum', e.target.files?.[0] || null)}
+                    onChange={(e) => handleInputChange('archivo_curriculum', e.target.files?.[0] || null)}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.curriculum ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -1011,25 +990,24 @@ const ApplicantRegistration: React.FC = () => {
 
                 <div className="p-4 bg-white rounded-lg shadow">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Captura Celular <span className="text-red-500">*</span>
+                    Certificado Ofimatica (opcional) <span className="text-red-500">*</span>
                   </label>
                   <p className="text-xs text-gray-500 mb-2">
-                    Captura de Pantalla CARACTERISTICAS DEL EQUIPO CELULAR (Solo JPG, JPEG o PNG. Max: 3MB)
+                    Imagen de certificado de ofimatica (Solo JPG, JPEG o PNG. Max: 3MB)
                   </p>
-                  <img src="/android.jpg" className="h-[350px] object-contain mb-2" />
+                  <img src="/certificado.png" className="h-[200px] object-contain mb-2" />
                   <input
                     type="file"
                     accept=".jpg, .jpeg, .png"
-                    onChange={(e) => handleInputChange('capturaPantalla', e.target.files?.[0] || null)}
+                    onChange={(e) => handleInputChange('archivo_certificado_ofimatica', e.target.files?.[0] || null)}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.capturaPantalla ? 'border-red-500' : 'border-gray-300'
+                      errors.archivo_certificado_ofimatica ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    required
                   />
-                  {errors.capturaPantalla && (
-                    <p className="text-red-500 text-xs mt-1">{errors.capturaPantalla}</p>
+                  {errors.archivo_certificado_ofimatica && (
+                    <p className="text-red-500 text-xs mt-1">{errors.archivo_certificado_ofimatica}</p>
                   )}
-                </div>
+                </div> 
               </div>
             </div>
 
@@ -1045,10 +1023,10 @@ const ApplicantRegistration: React.FC = () => {
                     ¿Cuenta con experiencia en procesos electorales? <span className="text-red-500">*</span>
                   </label>
                   <select
-                    value={formData.experienciaEspecifica}
-                    onChange={(e) => handleInputChange('experienciaEspecifica', e.target.value)}
+                    value={formData.experienciaGeneral}
+                    onChange={(e) => handleInputChange('experienciaGeneral', e.target.value)}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.experienciaEspecifica ? 'border-red-500' : 'border-gray-300'
+                      errors.experienciaGeneral ? 'border-red-500' : 'border-gray-300'
                     }`}
                     required
                   >
@@ -1056,7 +1034,7 @@ const ApplicantRegistration: React.FC = () => {
                     <option value="SI">SÍ</option>
                     <option value="NO">NO</option>
                   </select>
-                  {errors.experienciaEspecifica && <p className="text-red-500 text-xs mt-1">{errors.experienciaEspecifica}</p>}
+                  {errors.experienciaGeneral && <p className="text-red-500 text-xs mt-1">{errors.experienciaGeneral}</p>}
                 </div>
                 
                 <div>
@@ -1064,9 +1042,9 @@ const ApplicantRegistration: React.FC = () => {
                     Número de procesos en los que participó
                   </label>
                   <select
-                    value={formData.nroDeProcesos}
-                    onChange={(e) => handleInputChange('nroDeProcesos', e.target.value)}
-                    disabled={formData.experienciaEspecifica !== 'SI'}
+                    value={formData.experienciaEspecifica}
+                    onChange={(e) => handleInputChange('experienciaEspecifica', e.target.value)}
+                    disabled={formData.experienciaGeneral !== 'SI'}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                   >
                     <option value="">Seleccione...</option>
@@ -1097,31 +1075,23 @@ const ApplicantRegistration: React.FC = () => {
                     numeroDomicilio: '',
                     email: '',
                     celular: '',
-                    marcaCelular: '',
-                    modeloCelular: '',
-                    tipoPostulacion: 'OPERADOR DE TRANSMISION SIREPRE PROVINCIA',
-                    idRecinto: '1-1111-11111',
-                    nombreRecinto: 'VACIO',
-                    municipioRecinto: 'VACIO',
-                    viveCercaRecinto: true,
+                    experienciaGeneral: '',
                     experienciaEspecifica: '',
-                    nroDeProcesos: '',
                     requisitos: {
                       esBoliviano: false,
                       registradoPadronElectoral: false,
-                      cedulaIdentidadVigente: false,
+                      ciVigente: false,
                       disponibilidadTiempoCompleto: false,
-                      celularConCamara: false,
-                      android8_2OSuperior: false,
                       lineaEntel: false,
                       ningunaMilitanciaPolitica: false,
                       sinConflictosInstitucion: false,
-                      cuentaConPowerBank: false,
+                      sinSentenciaEjecutoriada: false,
                     },
                     archivo_ci: null,
                     archivo_no_militancia: null,
-                    curriculum: null,
-                    capturaPantalla: null,
+                    archivo_curriculum: null,
+                    archivo_certificado_ofimatica: null,
+                    cargoPostulacion: '',
                   });
                 }}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
