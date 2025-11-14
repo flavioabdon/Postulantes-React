@@ -323,7 +323,7 @@ const ApplicantRegistration: React.FC = () => {
         expedicion: verificationData.expedicion
       });
   
-      const response = await fetch(`http://localhost:8000/api/postulantes/existe?${params}`);
+      const response = await fetch(`http://34.176.50.193:5055/api/postulantes/existe?${params}`);
       const result = await response.json();
   
       if (result.success) {
@@ -384,7 +384,7 @@ const ApplicantRegistration: React.FC = () => {
         : '0';
       formDataToSend.append('experienciaGeneral', experiencia_general);*/
       console.log(formDataToSend)
-      const response = await fetch('http://localhost:8000/api/postulantes', {
+      const response = await fetch('http://34.176.50.193:5055/api/postulantes', {
         method: 'POST',
         body: formDataToSend
       });
@@ -401,7 +401,7 @@ const ApplicantRegistration: React.FC = () => {
         if (result.success && result.pdfUrl) {
           const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
           
-          const pdfResponse = await fetch(`http://localhost:8000${result.pdfUrl}`);
+          const pdfResponse = await fetch(`http://34.176.50.193:5055${result.pdfUrl}`);
           if (!pdfResponse.ok) {
             throw new Error('Error al descargar el PDF');
           }
@@ -560,7 +560,7 @@ const ApplicantRegistration: React.FC = () => {
                         ...prev, 
                         complemento: e.target.value.toUpperCase() 
                       }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="uppercase w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Ej: 1A"
                       maxLength={2}
                     />
@@ -633,8 +633,8 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="text"
                     value={formData.nombre}
-                    onChange={(e) => handleInputChange('nombre', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, ''))}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    onChange={(e) => handleInputChange('nombre', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, '').toUpperCase())}
+                    className={`uppercase w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.nombre ? 'border-red-500' : 'border-gray-300'
                     }`}
                     required
@@ -649,8 +649,8 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="text"
                     value={formData.apellidoPaterno}
-                    onChange={(e) => handleInputChange('apellidoPaterno', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, ''))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => handleInputChange('apellidoPaterno', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, '').toUpperCase())}
+                    className="uppercase w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
@@ -661,8 +661,8 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="text"
                     value={formData.apellidoMaterno}
-                    onChange={(e) => handleInputChange('apellidoMaterno', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, ''))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => handleInputChange('apellidoMaterno', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, '').toUpperCase())}
+                    className="uppercase w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 
@@ -712,9 +712,9 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="text"
                     value={formData.carrera}
-                    onChange={(e) => handleInputChange('carrera', e.target.value)}
+                    onChange={(e) => handleInputChange('carrera', e.target.value.toUpperCase())}
                     disabled={!formData.gradoInstruccion || formData.gradoInstruccion === 'BACHILLER'}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
+                    className="uppercase w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                   />
                 </div>
               </div>
@@ -734,8 +734,8 @@ const ApplicantRegistration: React.FC = () => {
                   <input
                     type="text"
                     value={formData.ciudad}
-                    onChange={(e) => handleInputChange('ciudad', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, ''))}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    onChange={(e) => handleInputChange('ciudad', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, '').toUpperCase())}
+                    className={`uppercase w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.ciudad ? 'border-red-500' : 'border-gray-300'
                     }`}
                     required
@@ -774,7 +774,7 @@ const ApplicantRegistration: React.FC = () => {
                     type="text"
                     value={formData.zona?.split(': ')[1] || ''}
                     onChange={(e) => {
-                      const nombre = e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, '');
+                      const nombre = e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, '').toUpperCase();
                       if (tipoZonaSeleccionada) {
                         handleInputChange('zona', `${tipoZonaSeleccionada}: ${nombre}`)
                       } else {
@@ -782,7 +782,7 @@ const ApplicantRegistration: React.FC = () => {
                       }
                     }}
                     disabled = {!tipoZonaSeleccionada}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
+                    className={`uppercase w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
                         ${errors.zona ? 'border-red-500' : 'border-gray-300'} 
                         ${!tipoZonaSeleccionada ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                     placeholder="Ej: SAN PEDRO"
@@ -806,7 +806,7 @@ const ApplicantRegistration: React.FC = () => {
 
                       handleInputChange('numeroDomicilio', inputValue);
                     }}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    className={`uppercase w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.numeroDomicilio ? 'border-red-500' : 'border-gray-300'
                     }`}
                     maxLength={5}
@@ -848,7 +848,9 @@ const ApplicantRegistration: React.FC = () => {
                     type="text"
                     value={formData.calleAvenida?.split(': ')[1] || ''}
                     onChange={(e) => {
-                      const nombre = e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, '');
+                      const nombre = e.target.value
+                      .replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]/g, '')
+                      .toUpperCase();
                       if (tipoCalleAvSeleccionada) {
                         handleInputChange('calleAvenida', `${tipoCalleAvSeleccionada}: ${nombre}`)
                       } else {
@@ -856,7 +858,7 @@ const ApplicantRegistration: React.FC = () => {
                       }
                     }}
                     disabled = {!tipoCalleAvSeleccionada}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
+                    className={`uppercase w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 
                         ${errors.calleAvenida ? 'border-red-500' : 'border-gray-300'} 
                         ${!tipoCalleAvSeleccionada ? 'bg-gray-100 cursor-not-allowed' : ''}`}
                     placeholder="Ej: LANDAETA"
@@ -910,7 +912,7 @@ const ApplicantRegistration: React.FC = () => {
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.celular ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="60000000"
+                    placeholder="61234567"
                     maxLength={8}
                     required
                   />
