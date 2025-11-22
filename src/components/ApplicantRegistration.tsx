@@ -1118,7 +1118,7 @@ const ApplicantRegistration: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ¿Cuenta con experiencia en procesos electorales? <span className="text-red-500">*</span>
+                    ¿Cuenta con experiencia en procesos de empadronamiento? <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.experienciaGeneral}
