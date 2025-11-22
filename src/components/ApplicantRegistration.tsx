@@ -47,12 +47,15 @@ interface ApplicantData {
     ningunaMilitanciaPolitica: boolean;
     sinConflictosInstitucion: boolean;
     sinSentenciaEjecutoriada: boolean;
+    cuentaConCelularAndroid: boolean;
+    cuentaConPowerbank: boolean;
   };
   archivo_ci: File | null;
   archivo_no_militancia: File | null;
   archivo_curriculum: File | null;
   archivo_certificado_ofimatica: File | null;
   cargoPostulacion : string;
+  experienciaProcesosRural: string;
 }
 
 const serializeFile = (file: File | null): string | null => {
@@ -131,12 +134,15 @@ const ApplicantRegistration: React.FC = () => {
       ningunaMilitanciaPolitica: false,
       sinConflictosInstitucion: false,
       sinSentenciaEjecutoriada: false,
+      cuentaConCelularAndroid: false,
+      cuentaConPowerbank: false,
     },
     archivo_ci: null,
     archivo_no_militancia: null,
     archivo_curriculum: null,
     archivo_certificado_ofimatica: null,
     cargoPostulacion: '',
+    experienciaProcesosRural: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -188,13 +194,16 @@ const ApplicantRegistration: React.FC = () => {
         lineaEntel: false,
         ningunaMilitanciaPolitica: false,
         sinConflictosInstitucion: false,
-        sinSentenciaEjecutoriada: false
+        sinSentenciaEjecutoriada: false,
+        cuentaConCelularAndroid: false,
+        cuentaConPowerbank: false,
       },
       archivo_ci: null,
       archivo_no_militancia: null,
       archivo_curriculum: null,
       archivo_certificado_ofimatica: null,
       cargoPostulacion: '',
+      experienciaProcesosRural: '',
     });
     setMessage({ type: 'success', text: 'Formulario reiniciado para nuevo registro.' });
   };
@@ -323,7 +332,7 @@ const ApplicantRegistration: React.FC = () => {
         expedicion: verificationData.expedicion
       });
   
-      const response = await fetch(`http://34.176.50.193:5055/api/postulantes/existe?${params}`);
+      const response = await fetch(`http://localhost:5055/api/postulantes/existe?${params}`);
       const result = await response.json();
   
       if (result.success) {
@@ -361,7 +370,7 @@ const ApplicantRegistration: React.FC = () => {
       showMessage('error', 'Por favor corrija los errores en el formulario.');
       return;
     }
-
+    console.log(formData)
     try {
       const formDataToSend = new FormData();
       
@@ -384,7 +393,7 @@ const ApplicantRegistration: React.FC = () => {
         : '0';
       formDataToSend.append('experienciaGeneral', experiencia_general);*/
       console.log(formDataToSend)
-      const response = await fetch('http://34.176.50.193:5055/api/postulantes', {
+      const response = await fetch('http://localhost:5055/api/postulantes', {
         method: 'POST',
         body: formDataToSend
       });
@@ -401,7 +410,7 @@ const ApplicantRegistration: React.FC = () => {
         if (result.success && result.pdfUrl) {
           const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
           
-          const pdfResponse = await fetch(`http://34.176.50.193:5055${result.pdfUrl}`);
+          const pdfResponse = await fetch(`http://localhost:5055${result.pdfUrl}`);
           if (!pdfResponse.ok) {
             throw new Error('Error al descargar el PDF');
           }
@@ -517,12 +526,12 @@ const ApplicantRegistration: React.FC = () => {
               </div>
               
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                <p className="text-red-800 text-sm">
+                {/* <p className="text-red-800 text-sm">
                   <strong>-NO</strong> ser personal eventual de otra instancia del TSE (Ejemplo: Notario Electoral).
                 </p>
                 <p className="text-red-800 text-sm">
                   <strong>-NO</strong> Haber sido seleccionado  como JURADO ELECTORAL. 
-                </p>
+                </p> */}
                                 <p className="text-yellow-800 text-sm">
                   <strong>IMPORTANTE:</strong> La postulación solo se puede realizar UNA SOLA VEZ. 
                   Verifique que los datos introducidos sean correctos. 
@@ -922,38 +931,57 @@ const ApplicantRegistration: React.FC = () => {
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6">
-              <div className="flex items-center gap-2 mb-6">
-                <Smartphone className="w-5 h-5 text-blue-600" />
-                <h3 className="text-lg font-semibold">Cargo de Postulación</h3>
-              </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Seleccione el cargo al desea postular:
-                  </label>
-                  <select
-                    value={formData.cargoPostulacion}
-                    onChange={(e) => handleInputChange('cargoPostulacion', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.cargoPostulacion ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    required
-                  >
-                    <option value="">Seleccione...</option>
-                    <option value="COORDINADOR AREA RURAL">COORDINADOR AREA RURAL</option>
-                    <option value="COORDINADOR AREA URBANA">COORDINADOR AREA URBANA</option>
-                    <option value="TECNICO DE SOPORTE INFORMATICO RURAL">TECNICO DE SOPORTE INFORMATICO RURAL</option>
-                    <option value="TECNICO DE SOPORTE INFORMATICO  URBANO">TECNICO DE SOPORTE INFORMATICO  URBANO</option>
-                    <option value="AUXILIAR TECNICO">AUXILIAR TECNICO</option>
-                    <option value="TECNICO LOGISTICO">TECNICO LOGISTICO</option>
-                    <option value="NOTARIO OPERADOR RURAL">NOTARIO OPERADOR RURAL</option>
-                    <option value="ASISTENTE DE MEGACENTRO">ASISTENTE DE MEGACENTRO</option>
-                    <option value="CONTROL DE CALIDAD DE DOCUMENTOS">CONTROL DE CALIDAD DE DOCUMENTOS</option>
-                  </select>
-                  {errors.cargoPostulacion && <p className="text-red-500 text-xs mt-1">{errors.cargo_postulacion}</p>}
+                <div className="flex items-center gap-2 mb-6">
+                  <Smartphone className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-lg font-semibold">Cargo de Postulación</h3>
                 </div>
-              </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Seleccione el cargo al desea postular:<span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={formData.cargoPostulacion}
+                      onChange={(e) => handleInputChange('cargoPostulacion', e.target.value)}
+                      className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                        errors.cargoPostulacion ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                      required
+                    >
+                      <option value="">Seleccione...</option>
+                      <option value="COORDINADOR AREA RURAL">COORDINADOR AREA RURAL</option>
+                      <option value="COORDINADOR AREA URBANA">COORDINADOR AREA URBANA</option>
+                      <option value="COORDINADOR GENERAL">COORDINADOR GENERAL</option>
+                      <option value="TECNICO DE SOPORTE INFORMATICO">TECNICO DE SOPORTE INFORMATICO</option>
+                      <option value="AUXILIAR TECNICO">AUXILIAR ADMINISTRATIVO</option>
+                      <option value="TECNICO LOGISTICO">TECNICO LOGISTICO</option>
+                      <option value="NOTARIO OPERADOR RURAL">NOTARIO OPERADOR RURAL</option>
+                      <option value="ASISTENTE DE MEGACENTRO">ASISTENTE DE MEGACENTRO</option>
+                      <option value="CONTROL DE CALIDAD DE DOCUMENTOS">CONTROL DE CALIDAD DE DOCUMENTOS</option>
+                    </select>
+                    {errors.cargoPostulacion && <p className="text-red-500 text-xs mt-1">{errors.cargo_postulacion}</p>}
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1 mt-4">
+                    En caso postular a un cargo en el ÁREA RURAL ingresar los Municipios en donde trabajó como empadronador Biométrico
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.experienciaProcesosRural}
+                    onChange={(e) => handleInputChange('experienciaProcesosRural', e.target.value.replace(/[^A-Za-zÁÉÍÓÚáéíóúñÑ\s]/g, '').toUpperCase())}
+                    className={`uppercase w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.experienciaProcesosRural ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder='IXIAMAS, LA ASUNTA,...etc'
+                  />
+                  {errors.experienciaProcesosRural && <p className="text-red-500 text-xs mt-1">{errors.experienciaProcesosRural}</p>}
+                </div>
+              
+
             </div>
 
             <div className="bg-white rounded-lg shadow-lg p-6">
@@ -974,6 +1002,8 @@ const ApplicantRegistration: React.FC = () => {
                     />
                     <label htmlFor={key} className="text-sm text-gray-700">
                       {key === 'esBoliviano' && 'Ser Boliviano'}
+                      {key === 'cuentaConCelularAndroid' && 'Cuenta con Celular Android mayor a 8.1'}
+                      {key === 'cuentaConPowerbank' && 'Cuenta con Powerbank'}
                       {key === 'registradoPadronElectoral' && 'Estar registrado en el padrón electoral'}
                       {key === 'ciVigente' && 'Contar con CI vigente'}
                       {key === 'disponibilidadTiempoCompleto' && 'Disponibilidad tiempo completo'}
@@ -1058,15 +1088,15 @@ const ApplicantRegistration: React.FC = () => {
 
                 <div className="p-4 bg-white rounded-lg shadow">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Certificado Ofimatica (opcional)
+                    Certificado de Experiencia en Procesos de Empadronamiento (opcional)
                   </label>
                   <p className="text-xs text-gray-500 mb-2">
-                    Imagen de certificado de ofimatica (Solo JPG, JPEG o PNG. Max: 3MB)
+                    Subir Certificado(s) (Solo PDF Max: 3MB)
                   </p>
                   <img src="/certificado.png" className="h-[200px] object-contain mb-2" />
                   <input
                     type="file"
-                    accept=".jpg, .jpeg, .png"
+                    accept=".pdf"
                     onChange={(e) => handleInputChange('archivo_certificado_ofimatica', e.target.files?.[0] || null)}
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.archivo_certificado_ofimatica ? 'border-red-500' : 'border-gray-300'
@@ -1154,12 +1184,15 @@ const ApplicantRegistration: React.FC = () => {
                       ningunaMilitanciaPolitica: false,
                       sinConflictosInstitucion: false,
                       sinSentenciaEjecutoriada: false,
+                      cuentaConCelularAndroid: false,
+                      cuentaConPowerbank: false,
                     },
                     archivo_ci: null,
                     archivo_no_militancia: null,
                     archivo_curriculum: null,
                     archivo_certificado_ofimatica: null,
                     cargoPostulacion: '',
+                    experienciaProcesosRural: '',
                   });
                 }}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
