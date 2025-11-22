@@ -332,7 +332,7 @@ const ApplicantRegistration: React.FC = () => {
         expedicion: verificationData.expedicion
       });
   
-      const response = await fetch(`http://localhost:5055/api/postulantes/existe?${params}`);
+      const response = await fetch(`http://34.176.50.193:5055/api/postulantes/existe?${params}`);
       const result = await response.json();
   
       if (result.success) {
@@ -393,7 +393,7 @@ const ApplicantRegistration: React.FC = () => {
         : '0';
       formDataToSend.append('experienciaGeneral', experiencia_general);*/
       console.log(formDataToSend)
-      const response = await fetch('http://localhost:5055/api/postulantes', {
+      const response = await fetch('http://34.176.50.193:5055/api/postulantes', {
         method: 'POST',
         body: formDataToSend
       });
@@ -410,7 +410,7 @@ const ApplicantRegistration: React.FC = () => {
         if (result.success && result.pdfUrl) {
           const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
           
-          const pdfResponse = await fetch(`http://localhost:5055${result.pdfUrl}`);
+          const pdfResponse = await fetch(`http://34.176.50.193:5055${result.pdfUrl}`);
           if (!pdfResponse.ok) {
             throw new Error('Error al descargar el PDF');
           }
