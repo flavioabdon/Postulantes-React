@@ -56,6 +56,7 @@ interface ApplicantData {
   archivo_certificado_ofimatica: File | null;
   cargoPostulacion : string;
   experienciaProcesosRural: string;
+  telefono: string;
 }
 
 const serializeFile = (file: File | null): string | null => {
@@ -143,6 +144,7 @@ const ApplicantRegistration: React.FC = () => {
     archivo_certificado_ofimatica: null,
     cargoPostulacion: '',
     experienciaProcesosRural: '',
+    telefono: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -204,6 +206,7 @@ const ApplicantRegistration: React.FC = () => {
       archivo_certificado_ofimatica: null,
       cargoPostulacion: '',
       experienciaProcesosRural: '',
+      telefono: '',
     });
     setMessage({ type: 'success', text: 'Formulario reiniciado para nuevo registro.' });
   };
@@ -455,6 +458,54 @@ const ApplicantRegistration: React.FC = () => {
       setIsLoading(false);
     }
   };
+  const requisitosCargo: Record<string, string[]> = {
+    "COORDINADOR AREA RURAL": [
+      "Experiencia mínima de 2 años en trabajo de campo.",
+      "Conocimiento en logística territorial.",
+      "Capacidad de coordinación de personal."
+    ],
+    "COORDINADOR AREA URBANA": [
+      "Experiencia en gestión urbana.",
+      "Manejo de herramientas informáticas.",
+      "Habilidades de comunicación."
+    ],
+    "COORDINADOR GENERAL": [
+      "Experiencia mínima de 3 años en cargos similares.",
+      "Planificación estratégica.",
+      "Coordinación interinstitucional."
+    ],
+    "TECNICO DE SOPORTE INFORMATICO": [
+      "Conocimientos en hardware y software.",
+      "Resolución de incidencias.",
+      "Disponibilidad inmediata."
+    ],
+    "AUXILIAR ADMINISTRATIVO": [
+      "Gestión documental.",
+      "Atención al cliente.",
+      "Manejo de paquete Office."
+    ],
+    "TECNICO LOGISTICO": [
+      "Control de inventarios.",
+      "Planificación logística.",
+      "Trabajo bajo presión."
+    ],
+    "NOTARIO OPERADOR RURAL": [
+      "Experiencia en registro biométrico.",
+      "Trabajo en zonas rurales.",
+      "Responsabilidad documental."
+    ],
+    "ASISTENTE DE MEGACENTRO": [
+      "Atención al público.",
+      "Manejo de sistemas.",
+      "Trabajo en turnos."
+    ],
+    "CONTROL DE CALIDAD DE DOCUMENTOS": [
+      "Revisión precisa de documentos.",
+      "Experiencia previa en control de calidad.",
+      "Responsabilidad y detalle."
+    ],
+  };
+
 
   useEffect(() => {
     if (formData.experienciaGeneral === 'NO') {
@@ -470,6 +521,7 @@ const ApplicantRegistration: React.FC = () => {
 
   const [tipoZonaSeleccionada, setTipoZonaSeleccionada] = useState('');
   const [tipoCalleAvSeleccionada, setTipoCalleAvSeleccionada] = useState('');
+  const [cargoSeleccionado, setCargoSeleccionado] = useState("");
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -930,6 +982,30 @@ const ApplicantRegistration: React.FC = () => {
                   />
                   {errors.celular && <p className="text-red-500 text-xs mt-1">{errors.celular}</p>}
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Celular Respaldo
+                  </label>
+                  <input
+                    type="tel"
+                    value={formData.telefono}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, '').slice(0, 8);
+                      if (value.length > 0 && !/^[6-7]/.test(value)) {
+                        showMessage('error', 'El celular debe comenzar con 6 o 7');
+                        return;
+                      }
+                      handleInputChange('telefono', value);
+                    }}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      errors.telefono ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="61234567"
+                    maxLength={8}
+                  />
+                  {errors.telefono && <p className="text-red-500 text-xs mt-1">{errors.telefono}</p>}
+                </div>
               </div>
             </div>
 
@@ -943,17 +1019,21 @@ const ApplicantRegistration: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Seleccione el cargo al desea postular:<span className="text-red-500">*</span>
+                      Seleccione el cargo al desea postular:<span className="text-red-500">*</span> 
                     </label>
                     <select
                       value={formData.cargoPostulacion}
-                      onChange={(e) => handleInputChange('cargoPostulacion', e.target.value)}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        handleInputChange('cargoPostulacion', e.target.value);
+                        setCargoSeleccionado(value);
+                      }}
                       className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                         errors.cargoPostulacion ? 'border-red-500' : 'border-gray-300'
                       }`}
                       required
                     >
-                      <option value="">Seleccione...</option>
+                      <option value="">-- Seleccionar Cargo--</option>
                       <option value="COORDINADOR AREA RURAL">COORDINADOR AREA RURAL</option>
                       <option value="COORDINADOR AREA URBANA">COORDINADOR AREA URBANA</option>
                       <option value="COORDINADOR GENERAL">COORDINADOR GENERAL</option>
@@ -967,10 +1047,22 @@ const ApplicantRegistration: React.FC = () => {
                     {errors.cargoPostulacion && <p className="text-red-500 text-xs mt-1">{errors.cargo_postulacion}</p>}
                   </div>
                 </div>
-                
+                {cargoSeleccionado && (
+                  <div className="mt-4 p-4 bg-gray-100 rounded-lg border border-gray-300">
+                    <h3 className="text-lg font-semibold mb-2">
+                      Requisitos del cargo seleccionado:
+                    </h3>
+
+                    <ul className="list-disc pl-5 space-y-1 text-gray-700">
+                      {requisitosCargo[cargoSeleccionado]?.map((req, index) => (
+                        <li key={index}>{req}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1 mt-4">
-                    En caso postular a un cargo en el ÁREA RURAL ingresar los Municipios en donde trabajó como empadronador Biométrico
+                    Describa brevemente su experiencia como empadronador biométrico en el ÁREA RURAL
                   </label>
                   <input
                     type="text"
@@ -979,7 +1071,6 @@ const ApplicantRegistration: React.FC = () => {
                     className={`uppercase w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.experienciaProcesosRural ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder='IXIAMAS, LA ASUNTA,...etc'
                   />
                   {errors.experienciaProcesosRural && <p className="text-red-500 text-xs mt-1">{errors.experienciaProcesosRural}</p>}
                 </div>
@@ -1196,6 +1287,7 @@ const ApplicantRegistration: React.FC = () => {
                     archivo_certificado_ofimatica: null,
                     cargoPostulacion: '',
                     experienciaProcesosRural: '',
+                    telefono: '',
                   });
                 }}
                 className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
