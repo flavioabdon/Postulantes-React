@@ -422,7 +422,7 @@ const ApplicantRegistration: React.FC = () => {
         if (result.success && result.pdfUrl) {
           const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
           
-          const pdfResponse = await fetch(`/api/postulantes/pdf/${result.pdfUrl}`);
+          const pdfResponse = await fetch(`/${result.pdfUrl}`);
           if (!pdfResponse.ok) {
             throw new Error('Error al descargar el PDF');
           }
