@@ -10,5 +10,10 @@ export default defineConfig({
     allowedHosts: [
       "serecipeb-subnacionales.duckdns.org",
     ],
+    hmr: {
+      protocol: 'wss',
+      host: 'serecipeb-subnacionales.duckdns.org',
+      port: 443
+    }    
   },
 });
