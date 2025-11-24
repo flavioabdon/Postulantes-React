@@ -346,6 +346,7 @@ const ApplicantRegistration: React.FC = () => {
         showMessage('error', 'Error al verificar el postulante.');
       }
     } catch (error) {
+      setCurrentStep('registration');
       showMessage('error', 'Error de conexión con el servidor.');
     } finally {
       setIsLoading(false);
@@ -485,6 +486,9 @@ const ApplicantRegistration: React.FC = () => {
                 <p className="text-blue-100 mt-2">
                   Complete el formulario para registrarse como postulante
                 </p>
+                <p className="text-blue-100 mt-2">
+                  para el Proceso de Empadronamiento Biométrico Electoral.
+                </p>
               </div>
               {currentStep === 'registration' && (
                 <button
@@ -526,13 +530,7 @@ const ApplicantRegistration: React.FC = () => {
               </div>
               
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                {/* <p className="text-red-800 text-sm">
-                  <strong>-NO</strong> ser personal eventual de otra instancia del TSE (Ejemplo: Notario Electoral).
-                </p>
-                <p className="text-red-800 text-sm">
-                  <strong>-NO</strong> Haber sido seleccionado  como JURADO ELECTORAL. 
-                </p> */}
-                                <p className="text-yellow-800 text-sm">
+                <p className="text-yellow-800 text-sm">
                   <strong>IMPORTANTE:</strong> La postulación solo se puede realizar UNA SOLA VEZ. 
                   Verifique que los datos introducidos sean correctos. 
                 </p>
@@ -628,6 +626,12 @@ const ApplicantRegistration: React.FC = () => {
 
         {currentStep === 'registration' && (
           <form onSubmit={handleRegistration} className="space-y-6">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                <p className="text-yellow-800 text-sm">
+                  <strong>IMPORTANTE:</strong> La postulación solo se puede realizar UNA SOLA VEZ. 
+                  Verifique que los datos introducidos sean correctos. 
+                </p>
+              </div>
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="flex items-center gap-2 mb-6">
                 <User className="w-5 h-5 text-blue-600" />
@@ -1010,7 +1014,7 @@ const ApplicantRegistration: React.FC = () => {
                       {key === 'lineaEntel' && 'Contar con línea Entel'}
                       {key === 'ningunaMilitanciaPolitica' && 'No contar con militancia política'}
                       {key === 'sinConflictosInstitucion' && 'Sin conflictos con la institución'}
-                      {key === 'sinSentenciaEjecutoriada' && 'No tener sentencias ejecutoriadas'}
+                      {key === 'sinSentenciaEjecutoriada' && 'No tener sentencia ejecutoriada condenatoria'}
                     </label>
                   </div>
                 ))}
@@ -1088,7 +1092,7 @@ const ApplicantRegistration: React.FC = () => {
 
                 <div className="p-4 bg-white rounded-lg shadow">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Certificado de Experiencia en Procesos de Empadronamiento (opcional)
+                    Certificado de Experiencia en Procesos de Empadronamiento (Deseable)
                   </label>
                   <p className="text-xs text-gray-500 mb-2">
                     Subir Certificado(s) (Solo PDF Max: 3MB)
