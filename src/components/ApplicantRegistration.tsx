@@ -346,7 +346,6 @@ const ApplicantRegistration: React.FC = () => {
         showMessage('error', 'Error al verificar el postulante.');
       }
     } catch (error) {
-      setCurrentStep('registration');
       showMessage('error', 'Error de conexión con el servidor.');
     } finally {
       setIsLoading(false);
