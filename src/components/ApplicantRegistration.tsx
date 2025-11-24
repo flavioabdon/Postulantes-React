@@ -1121,11 +1121,12 @@ const ApplicantRegistration: React.FC = () => {
                       <option value="COORDINADOR AREA URBANA">COORDINADOR AREA URBANA</option>
                       <option value="COORDINADOR GENERAL">COORDINADOR GENERAL</option>
                       <option value="TECNICO DE SOPORTE INFORMATICO">TECNICO DE SOPORTE INFORMATICO</option>
-                      <option value="AUXILIAR TECNICO">AUXILIAR ADMINISTRATIVO</option>
+                      <option value="AUXILIAR ADMINISTRATIVO FINANCIERO">AUXILIAR ADMINISTRATIVO FINANCIERO</option>
+                      <option value="AUXILIAR TECNICO">AUXILIAR TECNICO</option>
                       <option value="TECNICO LOGISTICO">TECNICO LOGISTICO</option>
                       <option value="NOTARIO OPERADOR RURAL">NOTARIO OPERADOR RURAL</option>
-                      <option value="ASISTENTE DE MEGACENTRO">ASISTENTE DE MEGACENTRO</option>
-                      <option value="CONTROL DE CALIDAD DE DOCUMENTOS">CONTROL DE CALIDAD DE DOCUMENTOS</option>
+                      <option value="NOTARIO OPERADOR URBANO">NOTARIO OPERADOR URBANO</option>
+                      <option value="TECNICO EN COMUNICACIÓN E INFORMACION">TECNICO EN COMUNICACIÓN E INFORMACION</option>
                     </select>
                     {errors.cargoPostulacion && <p className="text-red-500 text-xs mt-1">{errors.cargo_postulacion}</p>}
                   </div>
