@@ -23,7 +23,9 @@ import {
   Warehouse,
   ShieldCheck,
   Move3D,
-  NotebookTabs
+  NotebookTabs,
+  FileDown,
+
 } from 'lucide-react';
 
 interface VerificationData {
@@ -742,7 +744,7 @@ const ApplicantRegistration: React.FC = () => {
           <div className="bg-white rounded-lg shadow-lg">
             <div className='grid grid-cols-1 md:grid-cols-3 gap-4'><div></div><div className="flex justify-center"><img src="logoOEP.png" className="h-15" /></div><div></div></div>
             <div className="p-6">
-              <div className="flex items-center gap-2 mb-6">
+              <div className="flex items-center gap-2 mb-1">
                 <Search className="w-5 h-5 text-blue-600" />
                 <h2 className="text-xl font-semibold">Verificar Postulante</h2>
               </div>
@@ -751,6 +753,12 @@ const ApplicantRegistration: React.FC = () => {
                 <p className="text-yellow-800 text-sm">
                   <strong>IMPORTANTE:</strong> La postulación solo se puede realizar UNA SOLA VEZ. 
                   Verifique que los datos introducidos sean correctos. 
+                </p>
+                <p className="text-red-800 text-sm">
+                  <strong>DESCARGAR:</strong> Formularios de Declaración Jurada
+                </p>
+                <p className="text-red-800 text-sm">
+                  <strong>VER:</strong> los cargos disponibles y sus requisitos (en la parte inferior) antes de postularse.
                 </p>
               </div>
 
@@ -818,7 +826,7 @@ const ApplicantRegistration: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-4">
+                <div className="pt-4 flex flex-col items-center">
                   <button
                     type="submit"
                     disabled={isLoading}
@@ -838,6 +846,49 @@ const ApplicantRegistration: React.FC = () => {
                   </button>
                 </div>
               </form>
+            </div>
+            
+            <div className="mt-1 text-center">
+
+              {/* TÍTULO */}
+              <div className="flex flex-col items-center">
+                <FileText className="w-10 h-10 text-blue-600 mb-2" />
+                <h2 className="text-2xl font-bold text-gray-800">
+                  Formularios de Declaración Jurada para descargar
+                </h2>
+              </div>
+
+              {/* DESCRIPCIÓN */}
+              <p className="text-gray-600 mt-2 mb-6 max-w-xl mx-auto">
+                Aquí puede descargar los formularios necesarios para completar su postulación.
+                Seleccione el documento que desea obtener en formato PDF.
+              </p>
+
+              {/* BOTONES */}
+              <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+
+                {/* Botón 1 */}
+                <a
+                
+                  href="/formularios/FORMULARIO-DE-DECLARACION-JURADA-POSTULACION-SUBNACIONALES.pdf"
+                  download
+                  className="px-6 py-3 bg-green-600 text-white rounded-md shadow hover:bg-blue-700 transition flex items-center gap-2"
+                >
+                  <FileDown className="w-5 h-5" />
+                  Declaración Jurada de Postulación
+                </a>
+
+                {/* Botón 2 */}
+                <a
+                  href="/formularios/FORMULARIO-DE-DECLARACION-JURADA-DE-INCONPATIBILIDAD-SUBNACIONALES.pdf"
+                  download
+                  className="px-6 py-3 bg-green-600 text-white rounded-md shadow hover:bg-green-700 transition flex items-center gap-2"
+                >
+                  <FileDown className="w-5 h-5" />
+                  Declaración Jurada de Inconpatibilidad 
+                </a>
+
+              </div>
             </div>
             <div className="bg-white rounded-lg shadow-lg"> 
               <div className="p-6">
