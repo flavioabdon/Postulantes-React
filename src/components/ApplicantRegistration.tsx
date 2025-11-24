@@ -88,6 +88,70 @@ const deserializeFile = (serialized: string | null): File | null => {
   }
 };
 
+// Función auxiliar para descargar PDF
+const descargarPDF = async (pdfUrl: string, filename: string): Promise<boolean> => {
+  try {
+    const pdfFullUrl = pdfUrl.startsWith('http') 
+      ? pdfUrl 
+      : `${window.location.origin}${pdfUrl}`;
+    
+    console.log('Iniciando descarga desde:', pdfFullUrl);
+    
+    const response = await fetch(pdfFullUrl);
+    
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    const blob = await response.blob();
+    
+    // Verificar que sea un PDF
+    if (blob.type !== 'application/pdf') {
+      console.warn('Tipo de archivo recibido:', blob.type, 'Tamaño:', blob.size);
+      // Aún así intentar descargar si parece ser un PDF por el tamaño
+      if (blob.size < 1000) {
+        const text = await blob.text();
+        console.error('Contenido del archivo:', text);
+        throw new Error('El archivo recibido no es un PDF válido');
+      }
+    }
+
+    // Crear enlace de descarga
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    
+    document.body.appendChild(a);
+    a.click();
+    
+    // Limpiar
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 100);
+
+    return true;
+  } catch (error) {
+    console.error('Error en descargarPDF:', error);
+    throw error;
+  }
+};
+
+// Función para verificar conectividad
+const checkConnectivity = async (): Promise<boolean> => {
+  try {
+    const response = await fetch('/api/health', { 
+      method: 'HEAD',
+      cache: 'no-cache'
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+};
+
 const ApplicantRegistration: React.FC = () => {
   const loadFromLocalStorage = () => {
     const savedData = localStorage.getItem('applicantRegistrationData');
@@ -173,6 +237,12 @@ const ApplicantRegistration: React.FC = () => {
     };
     localStorage.setItem('applicantRegistrationData', JSON.stringify(stateToSave));
   }, [currentStep, verificationData, formData]);
+
+  // Agregar logs para debugging
+  useEffect(() => {
+    console.log('URL base:', window.location.origin);
+    console.log('Ruta actual:', window.location.pathname);
+  }, []);
 
   const handleNewRegistration = () => {
     localStorage.removeItem('applicantRegistrationData');
@@ -338,6 +408,13 @@ const ApplicantRegistration: React.FC = () => {
     setIsLoading(true);
   
     try {
+      // Verificar conectividad primero
+      const isConnected = await checkConnectivity();
+      if (!isConnected) {
+        showMessage('error', 'Error de conexión con el servidor. Verifique su conexión a internet.');
+        return;
+      }
+
       const params = new URLSearchParams({
         cedula_identidad: ci,
         complemento: verificationData.complemento,
@@ -345,6 +422,11 @@ const ApplicantRegistration: React.FC = () => {
       });
   
       const response = await fetch(`/api/postulantes/existe?${params}`);
+      
+      if (!response.ok) {
+        throw new Error(`Error del servidor: ${response.status}`);
+      }
+
       const result = await response.json();
   
       if (result.success) {
@@ -355,9 +437,10 @@ const ApplicantRegistration: React.FC = () => {
           setCurrentStep('registration');
         }
       } else {
-        showMessage('error', 'Error al verificar el postulante.');
+        showMessage('error', result.error || 'Error al verificar el postulante.');
       }
     } catch (error) {
+      console.error('Error en verificación:', error);
       showMessage('error', 'Error de conexión con el servidor.');
     } finally {
       setIsLoading(false);
@@ -382,8 +465,18 @@ const ApplicantRegistration: React.FC = () => {
       showMessage('error', 'Por favor corrija los errores en el formulario.');
       return;
     }
-    console.log(formData)
+
+    console.log('Datos del formulario:', formData);
+
     try {
+      // Verificar conectividad primero
+      const isConnected = await checkConnectivity();
+      if (!isConnected) {
+        showMessage('error', 'Error de conexión con el servidor. Verifique su conexión a internet.');
+        setIsLoading(false);
+        return;
+      }
+
       const formDataToSend = new FormData();
       
       Object.entries(formData).forEach(([key, value]) => {
@@ -400,73 +493,104 @@ const ApplicantRegistration: React.FC = () => {
       formDataToSend.append('complemento', verificationData.complemento);
       formDataToSend.append('expedicion', verificationData.expedicion);
 
-     /* const experiencia_general = formData.experienciaGeneral.toString() 
-        ? (formData.experienciaGeneral === '10' ? '10' : formData.experienciaGeneral || '0')
-        : '0';
-      formDataToSend.append('experienciaGeneral', experiencia_general);*/
-      console.log(formDataToSend)
+      console.log('Enviando datos al servidor...');
+
       const response = await fetch('/api/postulantes', {
         method: 'POST',
         body: formDataToSend
       });
 
+      console.log('Respuesta del servidor:', response.status, response.statusText);
+
       if (!response.ok) {
-        throw new Error('Error en la respuesta del servidor');
+        const errorText = await response.text();
+        console.error('Error del servidor:', errorText);
+        throw new Error(`Error en la respuesta del servidor: ${response.status} ${response.statusText}`);
       }
 
       const contentType = response.headers.get('content-type');
-      
+      console.log('Content-Type:', contentType);
+
+      // ✅ CORREGIDO: El servidor devuelve JSON, no PDF directamente
       if (contentType && contentType.includes('application/json')) {
         const result = await response.json();
+        console.log('Resultado JSON:', result);
         
-        if (result.success && result.pdfUrl) {
-          const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
-          
-          const pdfResponse = await fetch(`/${result.pdfUrl}`);
-          if (!pdfResponse.ok) {
-            throw new Error('Error al descargar el PDF');
+        if (result.success) {
+          if (result.pdfUrl) {
+            try {
+              await descargarPDF(
+                result.pdfUrl, 
+                result.pdfFilename || `comprobante_${verificationData.cedula_identidad}.pdf`
+              );
+              showMessage('success', 'Registro exitoso. Descargando comprobante...');
+              
+              setTimeout(() => {
+                handleNewRegistration();
+              }, 3000);
+            } catch (downloadError) {
+              console.error('Error al descargar PDF:', downloadError);
+              showMessage('error', 'Registro exitoso, pero hubo un error al descargar el comprobante. Por favor, contacte al administrador.');
+            }
+          } else {
+            showMessage('success', 'Registro exitoso, pero no se generó el comprobante.');
+            setTimeout(() => {
+              handleNewRegistration();
+            }, 3000);
           }
-          
-          const blob = await pdfResponse.blob();
+        } else {
+          showMessage('error', result.message || 'Error al registrar el postulante');
+        }
+      } else {
+        // Si no es JSON, intentar manejar como PDF directamente (fallback)
+        console.warn('Respuesta no JSON, intentando manejar como PDF...');
+        const blob = await response.blob();
+        
+        if (blob.type === 'application/pdf') {
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = pdfFilename;
+          a.download = `comprobante_${verificationData.cedula_identidad}.pdf`;
           document.body.appendChild(a);
           a.click();
           window.URL.revokeObjectURL(url);
           document.body.removeChild(a);
 
           showMessage('success', 'Registro exitoso. Descargando comprobante...');
+          
+          setTimeout(() => {
+            handleNewRegistration();
+          }, 3000);
         } else {
-          showMessage('error', result.message || 'Error al registrar el postulante');
+          const text = await response.text();
+          console.error('Respuesta inesperada:', text);
+          throw new Error('Tipo de respuesta no reconocido del servidor');
         }
-      } else if (contentType && contentType.includes('application/pdf')) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `comprobante_${verificationData.cedula_identidad}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-
-        showMessage('success', 'Registro exitoso. Descargando comprobante...');
-      } else {
-        throw new Error('Tipo de respuesta no reconocido');
       }
 
-      setTimeout(() => {
-        handleNewRegistration();
-      }, 10000);
     } catch (error) {
       console.error('Error en el registro:', error);
-      showMessage('error', error instanceof Error ? error.message : String(error));
+      
+      // Mostrar mensaje de error más específico
+      let errorMessage = 'Error al registrar el postulante';
+      if (error instanceof Error) {
+        if (error.message.includes('Failed to fetch')) {
+          errorMessage = 'Error de conexión con el servidor. Verifique su conexión a internet.';
+        } else if (error.message.includes('404')) {
+          errorMessage = 'El servidor no pudo encontrar el recurso solicitado.';
+        } else if (error.message.includes('500')) {
+          errorMessage = 'Error interno del servidor. Por favor, intente más tarde.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      showMessage('error', errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
+
   const requisitosCargo: Record<string, string[]> = {
     "NOTARIO OPERADOR RURAL": [
       "Experiencia comprobada en procesos de empadronamientos anteriores (Deseable).",
@@ -535,7 +659,8 @@ const ApplicantRegistration: React.FC = () => {
       "Disponibilidad para viaje al área rural"
     ],
   };
-    // Objeto con los íconos por cargo
+
+  // Objeto con los íconos por cargo
   const iconosCargo: Record<string, React.ElementType> = {
     "COORDINADOR AREA RURAL": TentTree,
     "COORDINADOR AREA URBANA": Building,
@@ -548,7 +673,6 @@ const ApplicantRegistration: React.FC = () => {
     "NOTARIO OPERADOR URBANO": NotebookTabs,
     "TECNICO EN COMUNICACIÓN E INFORMACION": ShieldCheck,
   };
-
 
   useEffect(() => {
     if (formData.experienciaGeneral === 'NO') {
@@ -750,8 +874,6 @@ const ApplicantRegistration: React.FC = () => {
               </div>
             </div>
           </div>
-          
-          
         )}
 
         {currentStep === 'registration' && (
