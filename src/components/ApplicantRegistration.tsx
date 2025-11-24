@@ -343,7 +343,7 @@ const ApplicantRegistration: React.FC = () => {
         expedicion: verificationData.expedicion
       });
   
-      const response = await fetch(`/api/postulantes/existe?${params}`);
+      const response = await fetch(`http://34.176.50.193:5055/api/postulantes/existe?${params}`);
       const result = await response.json();
   
       if (result.success) {
@@ -404,7 +404,7 @@ const ApplicantRegistration: React.FC = () => {
         : '0';
       formDataToSend.append('experienciaGeneral', experiencia_general);*/
       console.log(formDataToSend)
-      const response = await fetch('/api/postulantes', {
+      const response = await fetch('http://34.176.50.193:5055/api/postulantes', {
         method: 'POST',
         body: formDataToSend
       });
@@ -421,7 +421,7 @@ const ApplicantRegistration: React.FC = () => {
         if (result.success && result.pdfUrl) {
           const pdfFilename = `comprobante_${verificationData.cedula_identidad}.pdf`;
           
-          const pdfResponse = await fetch(`/${result.pdfUrl}`);
+          const pdfResponse = await fetch(`http://34.176.50.193:5055${result.pdfUrl}`);
           if (!pdfResponse.ok) {
             throw new Error('Error al descargar el PDF');
           }
@@ -468,24 +468,33 @@ const ApplicantRegistration: React.FC = () => {
   };
   const requisitosCargo: Record<string, string[]> = {
     "COORDINADOR AREA RURAL": [
-      "Experiencia mínima de 2 años en trabajo de campo.",
-      "Conocimiento en logística territorial.",
-      "Capacidad de coordinación de personal."
+      "Experiencia comprobada en cargos de Dirección, Coordinador, director o jefe",
+      "Experiencia comprobada en procesos de empadronamientos anteriores.",
+      "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
+      "Capacidad en resolución de conflictos",
+      "Manejo de Personal",
+      "Disponibilidad para viaje en caso de área rural"
     ],
     "COORDINADOR AREA URBANA": [
-      "Experiencia en gestión urbana.",
-      "Manejo de herramientas informáticas.",
-      "Habilidades de comunicación."
+      "Experiencia comprobada en cargos de Dirección, Coordinador, director o jefe",
+      "Experiencia comprobada en procesos de empadronamientos anteriores.",
+      "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
+      "Capacidad en resolución de conflictos",
+      "Manejo de Personal",
+      "Disponibilidad para viaje en caso de área rural"
     ],
     "COORDINADOR GENERAL": [
-      "Experiencia mínima de 3 años en cargos similares.",
-      "Planificación estratégica.",
-      "Coordinación interinstitucional."
+      "Experiencia comprobada en cargos de Dirección, Coordinador, director o jefe",
+      "Experiencia comprobada en procesos de empadronamientos anteriores.",
+      "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
+      "Capacidad en resolución de conflictos",
+      "Manejo de Personal",
+      "Disponibilidad para viaje al área rural"
     ],
     "TECNICO DE SOPORTE INFORMATICO": [
-      "Conocimientos en hardware y software.",
-      "Resolución de incidencias.",
-      "Disponibilidad inmediata."
+      "Experiencia comprobada en procesos de empadronamientos anteriores.",
+      "Experiencia comprobada en Soporte Técnico de computadoras, impresoras y/o soporte a usuarios.",
+      "Técnico Medio o Estudiante universitario (De 3er Año Mínimamente) de las carreras del área de Tecnológica, Ciencias Exactas, Ingeniería."
     ],
     "AUXILIAR ADMINISTRATIVO": [
       "Gestión documental.",
