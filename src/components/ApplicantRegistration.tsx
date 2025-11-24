@@ -14,7 +14,15 @@ import {
   AlertCircle,
   Loader2,
   Download,
-  PlusCircle
+  PlusCircle,
+  TentTree,
+  Computer,
+  NotebookPen,
+  FolderDot,
+  UserCheck,
+  Warehouse,
+  ShieldCheck,
+  Move3D
 } from 'lucide-react';
 
 interface VerificationData {
@@ -505,6 +513,18 @@ const ApplicantRegistration: React.FC = () => {
       "Responsabilidad y detalle."
     ],
   };
+    // Objeto con los íconos por cargo
+  const iconosCargo: Record<string, React.ElementType> = {
+    "COORDINADOR AREA RURAL": TentTree,
+    "COORDINADOR AREA URBANA": Building,
+    "COORDINADOR GENERAL": Move3D,
+    "TECNICO DE SOPORTE INFORMATICO": Computer,
+    "AUXILIAR ADMINISTRATIVO": FolderDot,
+    "TECNICO LOGISTICO": UserCheck,
+    "NOTARIO OPERADOR RURAL": NotebookPen,
+    "ASISTENTE DE MEGACENTRO": Warehouse,
+    "CONTROL DE CALIDAD DE DOCUMENTOS": ShieldCheck,
+  };
 
 
   useEffect(() => {
@@ -672,7 +692,43 @@ const ApplicantRegistration: React.FC = () => {
                 </div>
               </form>
             </div>
+            <div className="bg-white rounded-lg shadow-lg"> 
+              <div className="p-6">
+                <h2 className="text-lg font-bold mb-3">
+                  Cargos Disponibles y <strong>REQUISITOS</strong>
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Object.entries(requisitosCargo).map(([cargo, requisitos]) =>{
+                  const Icon = iconosCargo[cargo];
+                  return (
+                    <div
+                      key={cargo}
+                      className="bg-white shadow-lg rounded-xl border border-gray-200 p-6 flex flex-col items-center hover:shadow-xl transition-shadow duration-300"
+                    >
+                      {/* Icono */}
+                      <div className="bg-blue-100 rounded-full p-4 mb-4">
+                        {Icon && <Icon className="w-5 h-5 text-blue-600" />}
+                      </div>
+
+                      {/* Nombre del cargo */}
+                      <h3 className="text-lg font-semibold text-center mb-3">{cargo}</h3>
+
+                      {/* Lista de requisitos */}
+                      <ul className="list-disc pl-5 text-gray-700 text-sm space-y-1">
+                        {requisitos.map((req, index) => (
+                          <li key={index}>{req}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                }
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
+          
+          
         )}
 
         {currentStep === 'registration' && (
