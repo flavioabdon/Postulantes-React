@@ -610,55 +610,62 @@ const ApplicantRegistration: React.FC = () => {
       "Capacidad en el manejo de equipos de computación y Ofimática.",
       "Disponibilidad para viaje al área rural, para el cargo de Notario Operador Rural."
     ],
-    "AUXILIAR TECNICO": [
-      "Experiencia comprobada en procesos de empadronamientos anteriores. (No Excluyente).",
-      "Experiencia comprobada en Soporte Técnico de computadoras, impresoras y/o soporte a usuarios.",
-      "Técnico Medio o Estudiante universitario (De 3er Año Mínimamente) de las carreras del área de Informática  o financiera o similares.",
-      "Capacidad en resolución de conflictos.",
-      "Facilidad de soluciones agiles y rápidas."
-    ],
-    "COORDINADOR AREA RURAL": [
-      "Experiencia comprobada en procesos de empadronamientos anteriores.",
-      "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
-      "Capacidad en resolución de conflictos",
-      "Manejo de Personal",
-      "Disponibilidad para viaje en caso de área rural"
-    ],
-    "COORDINADOR AREA URBANA": [
-      "Experiencia comprobada en procesos de empadronamientos anteriores.",
-      "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
-      "Capacidad en resolución de conflictos",
-      "Manejo de Personal",
-      "Disponibilidad para viaje en caso de área rural"
-    ],
-    "TECNICO DE SOPORTE INFORMATICO": [
-      "Experiencia comprobada en procesos de empadronamientos anteriores.",
-      "Experiencia comprobada en Soporte Técnico de computadoras, impresoras y/o soporte a usuarios.",
-      "Técnico Medio o Estudiante universitario (De 3er Año Mínimamente) de las carreras del área de Tecnológica, Ciencias Exactas, Ingeniería.",
-      "Capacidad en resolución de conflictos",
-      "Facilidad de soluciones ágiles y rápidas",
-      "Disponibilidad para viaje al área rural"
-    ],
+    // "AUXILIAR TECNICO": [
+    //   "Experiencia comprobada en procesos de empadronamientos anteriores. (No Excluyente).",
+    //   "Experiencia comprobada en Soporte Técnico de computadoras, impresoras y/o soporte a usuarios.",
+    //   "Técnico Medio o Estudiante universitario (De 3er Año Mínimamente) de las carreras del área de Informática  o financiera o similares.",
+    //   "Capacidad en resolución de conflictos.",
+    //   "Facilidad de soluciones agiles y rápidas."
+    // ],
+    // "COORDINADOR AREA RURAL": [
+    //   "Experiencia comprobada en procesos de empadronamientos anteriores.",
+    //   "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
+    //   "Capacidad en resolución de conflictos",
+    //   "Manejo de Personal",
+    //   "Disponibilidad para viaje en caso de área rural"
+    // ],
+    // "COORDINADOR AREA URBANA": [
+    //   "Experiencia comprobada en procesos de empadronamientos anteriores.",
+    //   "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
+    //   "Capacidad en resolución de conflictos",
+    //   "Manejo de Personal",
+    //   "Disponibilidad para viaje en caso de área rural"
+    // ],
+    // "TECNICO DE SOPORTE INFORMATICO": [
+    //   "Experiencia comprobada en procesos de empadronamientos anteriores.",
+    //   "Experiencia comprobada en Soporte Técnico de computadoras, impresoras y/o soporte a usuarios.",
+    //   "Técnico Medio o Estudiante universitario (De 3er Año Mínimamente) de las carreras del área de Tecnológica, Ciencias Exactas, Ingeniería.",
+    //   "Capacidad en resolución de conflictos",
+    //   "Facilidad de soluciones ágiles y rápidas",
+    //   "Disponibilidad para viaje al área rural"
+    // ],
     "TECNICO LOGISTICO": [
       "Egresado, Técnico o Estudiante universitario (De 3er Año Mínimamente) preferentemente del área de ciencias económicas.",
       "Experiencia comprobada en al menos dos procesos electorales referidas a Organización y logística.",
       "Facilidad de soluciones agiles y rápidas.",
       "Ser ordenado y organizado con manejo de documentación."
     ],
-    "AUXILIAR ADMINISTRATIVO FINANCIERO": [
-      "Técnico Medio, Técnico Superior o Estudiante Universitario de 2do Año, en áreas administrativas y/o financieras de conocimiento a fines al cargo.",
-      "Experiencia laboral en entidades públicas o privadas de al menos 1 año."
-    ],
-    "TECNICO EN COMUNICACIÓN E INFORMACION": [
-      "Egresado o Estudiante universitario, de las carreras del área de Ciencias de la Comunicación, o diseño gráfico.",
-      "Experiencia de trabajo en entidades públicas o privadas, en actividades de comunicación, diseños gráficos y producción audiovisual."
-    ],
-    "COORDINADOR GENERAL": [
-      "Experiencia comprobada en procesos de empadronamientos anteriores.",
-      "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
-      "Capacidad en resolución de conflictos",
-      "Manejo de Personal",
-      "Disponibilidad para viaje al área rural"
+    // "AUXILIAR ADMINISTRATIVO FINANCIERO": [
+    //   "Técnico Medio, Técnico Superior o Estudiante Universitario de 2do Año, en áreas administrativas y/o financieras de conocimiento a fines al cargo.",
+    //   "Experiencia laboral en entidades públicas o privadas de al menos 1 año."
+    // ],
+    // "TECNICO EN COMUNICACIÓN E INFORMACION": [
+    //   "Egresado o Estudiante universitario, de las carreras del área de Ciencias de la Comunicación, o diseño gráfico.",
+    //   "Experiencia de trabajo en entidades públicas o privadas, en actividades de comunicación, diseños gráficos y producción audiovisual."
+    // ],
+    // "COORDINADOR GENERAL": [
+    //   "Experiencia comprobada en procesos de empadronamientos anteriores.",
+    //   "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
+    //   "Capacidad en resolución de conflictos",
+    //   "Manejo de Personal",
+    //   "Disponibilidad para viaje al área rural"
+    // ],
+    "ASISTENTE DE MEGACENTRO": [
+       "Experiencia comprobada en procesos de empadronamientos anteriores.",
+       "Egresado o titulado como Técnico o de las carreras del área de Tecnológica, Jurídica, humanidades, Ciencias Exactas, Ingeniería, Administrativas, Financiera y Económicas.",
+       "Capacidad en resolución de conflictos",
+       "Manejo de Personal",
+       "Disponibilidad para viaje al área rural"
     ],
   };
 
@@ -674,6 +681,7 @@ const ApplicantRegistration: React.FC = () => {
     "NOTARIO OPERADOR RURAL": Warehouse,
     "NOTARIO OPERADOR URBANO": NotebookTabs,
     "TECNICO EN COMUNICACIÓN E INFORMACION": ShieldCheck,
+    "ASISTENTE DE MEGACENTRO": FolderDot,
   };
 
   useEffect(() => {
@@ -1288,14 +1296,15 @@ const ApplicantRegistration: React.FC = () => {
                       <option value="">-- Seleccionar Cargo--</option>
                       <option value="NOTARIO OPERADOR RURAL">NOTARIO OPERADOR RURAL</option>
                       <option value="NOTARIO OPERADOR URBANO">NOTARIO OPERADOR URBANO</option>
-                      <option value="TECNICO DE SOPORTE INFORMATICO">TECNICO DE SOPORTE INFORMATICO</option>
+                      {/* <option value="TECNICO DE SOPORTE INFORMATICO">TECNICO DE SOPORTE INFORMATICO</option>
                       <option value="AUXILIAR ADMINISTRATIVO FINANCIERO">AUXILIAR ADMINISTRATIVO FINANCIERO</option>
                       <option value="AUXILIAR TECNICO">AUXILIAR TECNICO</option>
                       <option value="COORDINADOR AREA RURAL">COORDINADOR AREA RURAL</option>
-                      <option value="COORDINADOR AREA URBANA">COORDINADOR AREA URBANA</option>
+                      <option value="COORDINADOR AREA URBANA">COORDINADOR AREA URBANA</option> */}
                       <option value="TECNICO LOGISTICO">TECNICO LOGISTICO</option>
-                      <option value="TECNICO EN COMUNICACIÓN E INFORMACION">TECNICO EN COMUNICACIÓN E INFORMACION</option>
-                      <option value="COORDINADOR GENERAL">COORDINADOR GENERAL</option>
+                      {/* <option value="TECNICO EN COMUNICACIÓN E INFORMACION">TECNICO EN COMUNICACIÓN E INFORMACION</option>
+                      <option value="COORDINADOR GENERAL">COORDINADOR GENERAL</option> */}
+                      <option value="ASISTENTE DE MEGACENTRO">ASISTENTE DE MEGACENTRO</option>
                     </select>
                     {errors.cargoPostulacion && <p className="text-red-500 text-xs mt-1">{errors.cargo_postulacion}</p>}
                   </div>
