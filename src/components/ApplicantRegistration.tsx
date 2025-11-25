@@ -313,17 +313,22 @@ const ApplicantRegistration: React.FC = () => {
       case 'fechaNacimiento':
         if (!value || typeof value !== 'string') return 'La fecha de nacimiento es requerida';
         const birthDate = new Date(value);
-        const cutoffDate = new Date('2007-07-30');
+        const cutOnDate = new Date('1940-01-01');
+        const cutoffDate = new Date('2007-11-25');
+        if (birthDate < cutOnDate) return 'Edad no valida para la postulación'
         if (birthDate > cutoffDate) return 'Debe ser mayor de edad';
         break;
       case 'gradoInstruccion':
         if (!value) return 'El grado de instrucción es requerido';
         break;
       case 'ciudad':
+        if (!value) return 'Debe ingresar la ciudad en la que vive';
+        break;
       case 'zona':
+        if (!value) return 'Debe ingresar la zona en la que vive';
+        break;
       case 'calleAvenida':
-        if (!value || typeof value !== 'string') return 'Este campo es requerido';
-        if (/^[^A-Za-zÁÉÍÓÚáéíóúñÑ0-9\s]+$/.test(value)) return 'No se permiten símbolos.';
+        if (!value) return 'Este campo es requerido';
         break;
       case 'numeroDomicilio':
         if (!value || typeof value !== 'string') return 'El número de domicilio es requerido';
@@ -337,8 +342,16 @@ const ApplicantRegistration: React.FC = () => {
         if (!value || typeof value !== 'string') return 'El celular es requerido';
         if (!/^[6-7]\d{7}$/.test(value)) return 'Formato inválido (debe comenzar con 6 o 7 y tener 8 dígitos)';
         break;
+      case 'telefono':
+        if (value && typeof value == 'string'){
+          if (!/^[6-7]\d{7}$/.test(value)) return 'Formato inválido (debe comenzar con 6 o 7) y tener 8 dígitos'
+        }
+        break;
       case 'experienciaGeneral':
         if (!value) return 'Este campo es requerido';
+        break;
+      case 'cargoPostulacion':
+        if (!value) return 'Debe seleccionar un cargo';
         break;
       case 'archivo_ci':
         if (!value) return 'Este archivo es requerido';
@@ -359,13 +372,14 @@ const ApplicantRegistration: React.FC = () => {
           }
           break;
       case 'archivo_no_militancia':
-      case 'capturaPantalla':
+          if (!value) return 'Este archivo es requerido';
+          break;
+      case 'archivo_certificado_ofimatica':
           if (!value) return 'Este archivo es requerido';
           if (value instanceof File) {
-            if (value.size > 3*(1024 * 1024)) return 'El archivo no debe superar 3MB';
-            const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-            if (!allowedImageTypes.includes(value.type)) {
-              return 'Formato no permitido. Solo se aceptan archivos JPG, JPEG o PNG';
+            if (value.size > 4*(1024 * 1024)) return 'El archivo no debe superar 3MB';
+            if (value.type !== 'application/pdf') {
+              return 'Formato no permitido. Solo se acepta archivo PDF';
             }
           }
           break;                 
@@ -998,7 +1012,8 @@ const ApplicantRegistration: React.FC = () => {
                     type="date"
                     value={formData.fechaNacimiento}
                     onChange={(e) => handleInputChange('fechaNacimiento', e.target.value)}
-                    max="2007-08-17"
+                    max="2007-11-25"
+                    min="1940-01-01"
                     className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.fechaNacimiento ? 'border-red-500' : 'border-gray-300'
                     }`}
@@ -1279,7 +1294,7 @@ const ApplicantRegistration: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Seleccione el cargo al desea postular:<span className="text-red-500">*</span> 
+                      Seleccione el cargo al que desea postular:<span className="text-red-500">*</span> 
                     </label>
                     <select
                       value={formData.cargoPostulacion}
@@ -1306,7 +1321,7 @@ const ApplicantRegistration: React.FC = () => {
                       <option value="COORDINADOR GENERAL">COORDINADOR GENERAL</option> */}
                       <option value="ASISTENTE DE MEGACENTRO">ASISTENTE DE MEGACENTRO</option>
                     </select>
-                    {errors.cargoPostulacion && <p className="text-red-500 text-xs mt-1">{errors.cargo_postulacion}</p>}
+                    {errors.cargoPostulacion && <p className="text-red-500 text-xs mt-1">{errors.cargoPostulacion}</p>}
                   </div>
                 </div>
                 {cargoSeleccionado && (
